@@ -14,7 +14,7 @@ def get_config_by_type(task_type: TaskType, inputs: Dict[str, Any]) -> Optional[
         return get_analysis_config(task_type, inputs)
     
     # 2. 履歷相關 (Critique & Generation)
-    elif task_type in [TaskType.RESUME_CRITIQUE, TaskType.RESUME_GENERATION]:
+    elif task_type in [TaskType.RESUME_CRITIQUE, TaskType.RESUME_GENERATION, TaskType.RESUME_ANALYSIS, TaskType.RESUME_OPTIMIZATION]:
         from src.features.resume.prompts import get_resume_config
         return get_resume_config(task_type, inputs)
 

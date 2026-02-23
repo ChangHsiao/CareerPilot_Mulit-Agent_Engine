@@ -1,31 +1,18 @@
-from typing import List, Optional
 from pydantic import BaseModel, Field
+from typing import List, Optional
 
-class ReportMetadata(BaseModel):
-    """
-    報告的元數據，用於追蹤與版本控制。
-    """
-    user_id: str = Field(description="使用者 ID (需與輸入資料一致)")
-    timestamp: str = Field(description="報告生成當下的 ISO 8601 時間戳記 (包含毫秒與時區 Z)")
-    version: str = Field(default="1.0", description="報告版本號，固定輸出 '1.0'")
+# --- 履歷分析相關模型 ---
 
 class ResumeIssue(BaseModel):
-    """
-    描述單一履歷區塊的問題診斷。
-    """
     section: str = Field(description="履歷區塊名稱，如: 簡介、技能專長、專案、經歷、自傳")
     original_text: str = Field(description="使用者履歷中的原始文字內容，僅作為分析依據，不做任何評論說明，禁止修改")
     issue_type: List[str] = Field(description="問題類型分類（如：描述模糊、缺乏量化證據、ATS 關鍵字缺失、與目標職位不一致）,並詳加說明")
-    severity: List[str] = Field(description="從企業篩選視視角評估的嚴重程度(如：可優化、明顯扣分、直接刷掉、不修基本不用投),並詳加說明")
+    severity: List[str] = Field(description="從企業篩選視角評估的嚴重程度(如：可優化、明顯扣分、直接刷掉、不修基本不用投),並詳加說明")
     diagnosis_dimension: str = Field(description="此問題主要影響的企業診斷面向")
     issue_reason: str = Field(description="站在企業 / HR / ATS 角度，說明為何此問題會降低錄取率")
     improvement_direction: List[str] = Field(description="可執行的改善方向，列點式說明（只說『該補什麼證據或結構』，不代寫內容）")
 
 class ResumeAnalysis(BaseModel):
-    """
-    履歷整體的診斷分析報告。
-    """
-    report_metadata: ReportMetadata = Field(description="報告的元數據")
     candidate_positioning: str = Field(description="說明企業視角下，這份履歷目前『看起來像什麼角色』")
     target_role_gap_summary: str = Field(description="與目標職位（如後端工程師）之間的整體落差說明")
     overall_strengths: List[str] = Field(description="履歷中目前最具說服力、可保留的優勢點")
@@ -35,11 +22,9 @@ class ResumeAnalysis(BaseModel):
     screening_outcome_prediction: str = Field(description="模擬企業 6–10 秒快速掃描後，最可能的篩選結果與原因")
     recommended_next_actions: List[str] = Field(description="不涉及代寫的前提下，給候選人的下一步行動建議，列點式說明")
 
+# --- 履歷優化相關模型 ---
+
 class ResumeOptimization(BaseModel):
-    """
-    優化後的履歷內容。
-    """
-    report_metadata: ReportMetadata = Field(description="報告的元數據")
     professional_summary: str = Field(description="精簡的專業總結，需包含核心價值與推薦職缺的關鍵字")
     professional_experience: Optional[List[str]] = Field(default_factory=list, description="優化後的經歷列表。每筆包含 company, title, duration, 並以 STAR 原則重新撰寫的 description（條列式）")
     core_skills: List[str] = Field(description="從履歷中萃取與推薦職缺相關的技術或軟實力關鍵字6個")

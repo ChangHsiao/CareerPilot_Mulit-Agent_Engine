@@ -7,5 +7,7 @@ class TaskType(Enum):
     JOB_MATCHING = "job_matching" # 職缺匹配
     RESUME_CRITIQUE = "resume_critique"               # 履歷深度診斷
     RESUME_GENERATION = "resume_generation"           # 履歷優化與生成
+    RESUME_ANALYSIS = "resume_analysis"               # 履歷分析 (Jupyter 版邏輯)
+    RESUME_OPTIMIZATION = "resume_optimization"       # 履歷優化 (Jupyter 版邏輯)
     PROJECT_REC = "project_rec" # 專案推薦
     COVER_LETTER = "cover_letter" # 求職信
