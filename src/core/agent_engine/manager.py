@@ -100,6 +100,8 @@ class CareerAgentManager:
 
         # B. QA Task (最後一哩路)
         # QA 任務會接收所有 Worker 任務的產出作為 Context
+        qa_extra_instructions = config.get("qa_extra_instructions", "")
+        
         qa_task = Task(
             description=f"""
             審核並整合上述所有任務的產出結果。
@@ -107,13 +109,9 @@ class CareerAgentManager:
             **你的核心檢查清單 (Checklist)**:
             1. **完整性檢查**: 確認所有必要的分析維度（技術、心理、建議）都已包含。
             2. **格式驗證**: 確保輸出嚴格符合 `{config['output_model'].__name__}` 的定義。
-               - **report_metadata (必須包含此物件)**: 
-                 - `user_id`: 必須填入 "{user_input.get('user_id', 'unknown')}"。
-                 - `timestamp`: 必須填入 "{user_input.get('current_timestamp', 'unknown')}"。
-                 - `version`: 必須填入 "{user_input.get('report_version', '1.0')}"。
-               - **職位與職級**:
-                 - `role` 與 `actual_level` 等欄位，**必須完全匹配** Schema 描述中提供的標準清單，不可自行發明職稱（如：不可以使用『數據工程師』，必須使用『資料科學家』或『後端工程師』）。
             3. **語氣校正**: 確保使用流暢的台灣繁體中文。
+            
+            {qa_extra_instructions}
             
             **關鍵指示**: 如果 Worker 的產出有遺漏或矛盾，請根據上下文進行合理的修正或標註，但不要自行捏造數據。
             """,

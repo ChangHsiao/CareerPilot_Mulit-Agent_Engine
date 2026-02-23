@@ -134,6 +134,14 @@ def get_analysis_config(task_type: TaskType, inputs: Dict[str, Any]) -> Optional
     if task_type == TaskType.CAREER_ANALYSIS_EXPERIENCED:
         return {
             "output_model": CareerReport,
+            "qa_extra_instructions": f"""
+               - **report_metadata (必須包含此物件)**: 
+                 - `user_id`: 必須填入 "{inputs.get('user_id', 'unknown')}"。
+                 - `timestamp`: 必須填入 "{inputs.get('current_timestamp', 'unknown')}"。
+                 - `version`: 必須填入 "{inputs.get('report_version', '1.0')}"。
+               - **職位與職級**:
+                 - `role` 與 `actual_level` 等欄位，**必須完全匹配** Schema 描述中提供的標準清單。
+            """,
             "agents": [
                 {
                     "role": TECH_LEAD_ROLE,
@@ -179,6 +187,14 @@ def get_analysis_config(task_type: TaskType, inputs: Dict[str, Any]) -> Optional
     elif task_type == TaskType.CAREER_ANALYSIS_ENTRY_LEVEL:
         return {
             "output_model": CareerReport,
+            "qa_extra_instructions": f"""
+               - **report_metadata (必須包含此物件)**: 
+                 - `user_id`: 必須填入 "{inputs.get('user_id', 'unknown')}"。
+                 - `timestamp`: 必須填入 "{inputs.get('current_timestamp', 'unknown')}"。
+                 - `version`: 必須填入 "{inputs.get('report_version', '1.0')}"。
+               - **職位與職級**:
+                 - `role` 與 `actual_level` 等欄位，**必須完全匹配** Schema 描述中提供的標準清單。
+            """,
             "agents": [
                 {
                     "role": MENTOR_ROLE,
