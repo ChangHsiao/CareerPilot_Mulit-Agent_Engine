@@ -200,6 +200,38 @@ class JobMatcher:
         final_score = (0.7 * (1 - norm_dist)) + (0.3 * similarity)
         return f"{int(final_score * 100)}%"
 
+    @staticmethod
+    def calculate_dynamic_job_gap(user_6d: dict, job_payload: dict) -> float:
+        """
+        [職缺匹配專用]：針對真實職缺計算「硬實力契合度」。
+        邏輯：計算六維能力的歐幾里得距離，並轉化為 0-1 分數。
+        """
+        # 使用者向量 (D1~D6)
+        u_vec = np.array([
+            user_6d.get('D1', user_6d.get('d1_frontend', 0.0)), 
+            user_6d.get('D2', user_6d.get('d2_backend', 0.0)),
+            user_6d.get('D3', user_6d.get('d3_devops', 0.0)), 
+            user_6d.get('D4', user_6d.get('d4_data', 0.0)),
+            user_6d.get('D5', user_6d.get('d5_quality', 0.0)), 
+            user_6d.get('D6', user_6d.get('d6_soft', 0.0))
+        ])
+        
+        # 職缺向量 (對應資料庫欄位)
+        j_vec = np.array([
+            job_payload.get('d1_frontend', 0.0), 
+            job_payload.get('d2_backend', 0.0),
+            job_payload.get('d3_devops', 0.0), 
+            job_payload.get('d4_ai_data', 0.0),
+            job_payload.get('d5_quality', 0.0), 
+            job_payload.get('d6_soft_skills', 0.0)
+        ])
+
+        dist = np.linalg.norm(j_vec - u_vec)
+        max_dist = math.sqrt(6 * (5 ** 2)) 
+        
+        match_score = max(0.0, 1.0 - (dist / max_dist))
+        return float(match_score)
+
 # ==========================================
 # Part 3: [NEW] 職缺推薦層 (Recommendation) - 混合檢索漏斗
 # ==========================================
