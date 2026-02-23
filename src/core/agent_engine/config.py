@@ -23,7 +23,12 @@ def get_config_by_type(task_type: TaskType, inputs: Dict[str, Any]) -> Optional[
         from src.features.projects.prompts import get_project_config
         return get_project_config(task_type, inputs)
 
-    # 4. 職缺匹配 (Matching) - 預留擴充
+    # 4. 求職信生成 (Cover Letter)
+    elif task_type == TaskType.COVER_LETTER:
+        from src.features.cover_letter.prompts import get_cover_letter_config
+        return get_cover_letter_config(task_type, inputs)
+
+    # 5. 職缺匹配 (Matching) - 預留擴充
     # elif task_type == TaskType.JOB_MATCHING:
     #     from src.features.matching.prompts import get_matching_config
     #     return get_matching_config(task_type, inputs)
