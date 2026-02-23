@@ -18,7 +18,12 @@ def get_config_by_type(task_type: TaskType, inputs: Dict[str, Any]) -> Optional[
         from src.features.resume.prompts import get_resume_config
         return get_resume_config(task_type, inputs)
 
-    # 3. 職缺匹配 (Matching) - 預留擴充
+    # 3. Side Project 推薦 (Recommendation)
+    elif task_type == TaskType.PROJECT_REC:
+        from src.features.projects.prompts import get_project_config
+        return get_project_config(task_type, inputs)
+
+    # 4. 職缺匹配 (Matching) - 預留擴充
     # elif task_type == TaskType.JOB_MATCHING:
     #     from src.features.matching.prompts import get_matching_config
     #     return get_matching_config(task_type, inputs)
