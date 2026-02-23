@@ -1,0 +1,26 @@
+from typing import Dict, Any, Optional
+from .task_types import TaskType
+
+# ===============
+# 配置分發器 (Configuration Dispatcher)
+# ===============
+def get_config_by_type(task_type: TaskType, inputs: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    
+    # 根據 TaskType 路由到對應的 Feature 模組配置
+    
+    # 1. 職涯分析相關 (Experienced & Entry Level)
+    if task_type in [TaskType.CAREER_ANALYSIS_EXPERIENCED, TaskType.CAREER_ANALYSIS_ENTRY_LEVEL]:
+        from src.features.analysis.prompts import get_analysis_config
+        return get_analysis_config(task_type, inputs)
+    
+    # 2. 履歷相關 (Critique & Generation)
+    elif task_type in [TaskType.RESUME_CRITIQUE, TaskType.RESUME_GENERATION]:
+        from src.features.resume.prompts import get_resume_config
+        return get_resume_config(task_type, inputs)
+
+    # 3. 職缺匹配 (Matching) - 預留擴充
+    # elif task_type == TaskType.JOB_MATCHING:
+    #     from src.features.matching.prompts import get_matching_config
+    #     return get_matching_config(task_type, inputs)
+
+    return None

@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+*.env
+pip-log.txt
+
+# --- Jupyter Notebook (ML Service) ---
+.ipynb_checkpoints/
+
+# --- Web Frontend (預防有人裝 Node.js) ---
+node_modules/
+dist/
+build/
+.npm/
+
+# --- 作業系統垃圾檔 ---
+.DS_Store
+Thumbs.db
+
+# Specific to this project
+.env
+.vscode/
+Career_venv/
