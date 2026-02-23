@@ -78,7 +78,7 @@ def test_resume_flow():
         }
         
         optimized_resume = manager.run_task(
-            task_type_str="resume_optimization",
+            task_type_str="resume_opt",
             user_input=optimization_inputs
         )
         print("[優化結果摘要]:")

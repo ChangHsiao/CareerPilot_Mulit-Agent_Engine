@@ -44,7 +44,7 @@ def get_resume_config(task_type: TaskType, inputs: Dict[str, Any]) -> Optional[D
         }
 
     # === 2. 履歷優化 (RESUME_OPTIMIZATION) ===
-    elif task_type == TaskType.RESUME_OPTIMIZATION:
+    elif task_type == TaskType.RESUME_OPT:
         return {
             "output_model": ResumeOptimization,
             "agents": [
@@ -69,8 +69,5 @@ def get_resume_config(task_type: TaskType, inputs: Dict[str, Any]) -> Optional[D
                 }
             ]
         }
-    
-    # 支援原有的 RESUME_CRITIQUE 與 RESUME_GENERATION (如有需要)
-    # ... 
     
     return None

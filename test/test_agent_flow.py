@@ -90,7 +90,7 @@ def test_experienced_analysis():
     print("\n🎉 Analysis Result:")
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
-def test_resume_critique():
+def test_resume_analysis():
     print("\n\n====== TEST CASE: RESUME CRITIQUE ======")
     manager = CareerAgentManager(model_name="o3-mini")
 
@@ -99,8 +99,8 @@ def test_resume_critique():
         "target_role": "資深後端工程師"
     }
 
-    result = manager.run_task("resume_critique", user_input)
-    print("\n🎉 Critique Result:")
+    result = manager.run_task("resume_analysis", user_input)
+    print("\n🎉 Analysis Result:")
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
 if __name__ == "__main__":

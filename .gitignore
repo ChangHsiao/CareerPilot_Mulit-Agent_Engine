@@ -26,3 +26,5 @@ Thumbs.db
 .env
 .vscode/
 Career_venv/
+vibe_coding_prompt/
+.gitignore
