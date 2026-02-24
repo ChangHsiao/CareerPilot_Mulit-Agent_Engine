@@ -8,7 +8,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from dotenv import load_dotenv
 from src.core.database.supabase_client import get_supabase_client
-from qdrant_client import QdrantClient
+from src.core.database.qdrant_client import get_qdrant_client
 
 # 匯入重構後的服務
 from src.features.matching.service import CareerMatchingService
@@ -21,18 +21,16 @@ def test_full_job_matching_flow():
     load_dotenv()
     
     # 1. 環境變數檢查
-    qdrant_url = os.getenv("QDRANT_URL")
-    qdrant_api_key = os.getenv("QDRANT_API_KEY")
     openai_api_key = os.getenv("OPENAI_API_KEY")
 
-    if not all([qdrant_url, qdrant_api_key, openai_api_key]):
-        print("❌ 錯誤：環境變數不完整，請檢查 .env 檔案。")
+    if not openai_api_key:
+        print("❌ 錯誤：環境變數 OPENAI_API_KEY 不完整，請檢查 .env 檔案。")
         return
 
     try:
         # 2. 初始化連線
         print("正在建立資料庫連線...")
-        qdrant_client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key)
+        qdrant_client = get_qdrant_client()
         supabase_client = get_supabase_client()
         
         # 3. 啟動職缺匹配服務
