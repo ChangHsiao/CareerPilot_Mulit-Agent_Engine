@@ -1,6 +1,6 @@
 from crewai.tools import BaseTool
 import os
-from supabase import create_client, Client
+from src.core.database.supabase_client import get_supabase_client
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -13,15 +13,9 @@ class SearchRecommendJobTool(BaseTool):
         """
         到 Supabase 抓取職缺資料，進行推薦信生成。
         """
-        SUPABASE_URL = os.getenv("SUPABASE_URL")
-        SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-        
-        if not SUPABASE_URL or not SUPABASE_KEY:
-            return "錯誤: 遺漏 Supabase 設定，無法抓取職缺資料。"
-            
-        supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-
         try:
+            supabase = get_supabase_client()
+            
             # 採用括號包裹的方式進行鏈式呼叫，避免縮進與反斜線問題
             response = (
                 supabase.table("job_posting")

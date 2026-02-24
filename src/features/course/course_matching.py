@@ -32,21 +32,52 @@ class CourseRecommendationService:
 
     def fetch_user_gap(self, user_id: str) -> Optional[Dict]:
         """
-        從 Supabase 撈取該使用者的最新技能缺口分析結果。
+        從 Supabase 撈取該使用者的最新技能分析結果。
         """
         try:
+            # 根據 Schema 結構，欄位名稱應為 role 與 match_score
             resp = (
                 self.supabase
-                .table("user_skill_gap")
-                .select("job_category, match_score")
+                .table("user_skill")
+                .select("role, match_score")
                 .eq("user_id", user_id)
                 .order("created_at", desc=True)
                 .limit(1)
                 .execute()
             )
-            return resp.data[0] if resp.data else None
+            
+            if not resp.data:
+                return None
+            
+            data = resp.data[0]
+            raw_role = data.get("role", "backend")
+            raw_score = data.get("match_score", "40%")
+            
+            # 清理資料：移除 AI 產生的前綴與百分比符號
+            # 1. 處理 Role (提取關鍵字)
+            clean_role = raw_role.replace("領航員分析您適合的職類為 - ", "").strip()
+            
+            # 2. 處理 Match Score (轉為整數)
+            try:
+                if isinstance(raw_score, str):
+                    clean_score = int(raw_score.replace("%", "").strip())
+                else:
+                    clean_score = int(raw_score)
+            except:
+                clean_score = 40
+                
+            return {
+                "job_category": clean_role,
+                "match_score": clean_score
+            }
+            
         except Exception as e:
-            print(f"⚠️ 獲取使用者缺口分析失敗: {e}")
+            if "PGRST205" in str(e):
+                print(f"ℹ️ 提示: 資料表 'user_skill' 尚未建立，將使用預設參數。")
+            elif "42703" in str(e):
+                print(f"⚠️ 欄位名稱不符，請檢查 user_skill 表結構: {e}")
+            else:
+                print(f"⚠️ 獲取使用者缺口分析失敗: {e}")
             return None
 
     def fetch_candidate_courses(self, job_category: str) -> List[Dict]:
