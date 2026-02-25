@@ -146,20 +146,20 @@ class CourseRecommendationService:
 
         return processed_courses
 
-    def get_recommendations(self, user_id: str, top_k: int = 5) -> CourseRecommendationResponse:
+    def get_recommendations(self, user_id: str, top_k: int = 5) -> Dict[str, Any]:
         """
         主推薦流程入口。
         """
-        # 1. 獲取使用者狀態
+        # 1. 獲取使用者狀態 (從 Supabase 取得 match_score 與 job_category)
         user_gap = self.fetch_user_gap(user_id)
         if not user_gap:
-            # 默認值
             match_score = 40
             job_category = "backend"
         else:
             match_score = user_gap["match_score"]
             job_category = user_gap["job_category"]
 
+        # 計算 User Level
         user_level = self.score_to_user_level(match_score)
 
         # 2. 獲取並處理課程
@@ -173,9 +173,13 @@ class CourseRecommendationService:
             reverse=True
         )
 
-        # 4. 封裝回傳
+        # 4. 封裝回傳 (依據建議方案優化)
+        # 假設 ranked 已經算好了
+        top_courses_raw = ranked[:top_k]
+        
+        # 轉換為 CourseItem 清單
         recommendations = []
-        for r in ranked[:top_k]:
+        for r in top_courses_raw:
             recommendations.append(CourseItem(
                 course_id=str(r["course_id"]),
                 course_name=r["course_name"],
@@ -183,12 +187,17 @@ class CourseRecommendationService:
                 level=r["level"],
                 course_type=r.get("course_type"),
                 priority_score=r["priority_score"],
-                quality_score=r["quality_score"]
+                quality_score=r["quality_score"],
+                recommendation_reason=r.get("recommendation_reason") # 預留 AI 產出的欄位
             ))
 
-        return CourseRecommendationResponse(
+        # 封裝成標準 Response
+        response_data = CourseRecommendationResponse(
             user_id=user_id,
             user_level=user_level,
             match_score=match_score,
             recommendations=recommendations
         )
+
+        # 轉成字典回傳給前端
+        return response_data.model_dump()

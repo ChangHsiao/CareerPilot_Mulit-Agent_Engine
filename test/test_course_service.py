@@ -22,15 +22,15 @@ def test_course_recommendation():
         result = service.get_recommendations(test_user_id, top_k=3)
         
         print("✅ 推薦結果獲取成功！")
-        print(f"使用者等級: {result.user_level} (匹配分數: {result.match_score})")
-        print(f"獲取推薦課程數量: {len(result.recommendations)}")
+        print(f"使用者等級: {result['user_level']} (匹配分數: {result['match_score']})")
+        print(f"獲取推薦課程數量: {len(result['recommendations'])}")
         
-        for i, course in enumerate(result.recommendations, 1):
-            print(f"[{i}] {course.course_name}")
-            print(f"    - 難度: {course.level}")
-            print(f"    - 優先分數 (Priority): {course.priority_score:.4f}")
-            print(f"    - 品質分數 (Quality): {course.quality_score:.2f}")
-            print(f"    - 連結: {course.url}")
+        for i, course in enumerate(result['recommendations'], 1):
+            print(f"[{i}] {course['course_name']}")
+            print(f"    - 難度: {course['level']}")
+            print(f"    - 優先分數 (Priority): {course['priority_score']:.4f}")
+            print(f"    - 品質分數 (Quality): {course['quality_score']:.2f}")
+            print(f"    - 連結: {course['url']}")
 
     except Exception as e:
         print(f"❌ 測試過程中發生錯誤: {e}")
