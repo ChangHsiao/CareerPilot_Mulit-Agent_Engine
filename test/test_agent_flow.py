@@ -10,8 +10,6 @@ def test_experienced_analysis():
     manager = CareerAgentManager(model_name="o3-mini")
 
     INPUT_CAREER_DATA = {
-    "user_id": "1",
-    "timestamp": "2026-02-13T12:00:00.000Z",
     "module_a": {
         "q1_languages": [{"name": "Python", "score": 5}, {"name": "SQL", "score": 4}, {"name": "Git", "score": 4}],
         "q2_frontend": "unfamiliar",
@@ -86,7 +84,7 @@ def test_experienced_analysis():
         "resume_json": json.dumps(RESUME_DATA)
     }
 
-    result = manager.run_task("career_analysis_experienced", user_input)
+    result = manager.run_task("career_analysis_experienced", "user_123", user_input)
     print("\n🎉 Analysis Result:")
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
@@ -99,7 +97,7 @@ def test_resume_analysis():
         "target_role": "資深後端工程師"
     }
 
-    result = manager.run_task("resume_analysis", user_input)
+    result = manager.run_task("resume_analysis", "user_123", user_input)
     print("\n🎉 Analysis Result:")
     print(json.dumps(result, indent=2, ensure_ascii=False))
 

@@ -2,6 +2,7 @@ from enum import Enum
 
 class TaskType(Enum):
     """定義系統支援的所有任務類型"""
+    CAREER_ANALYSIS = "career_analysis"         # 通用職涯分析 (自動偵測)
     CAREER_ANALYSIS_EXPERIENCED = "career_analysis_experienced" # 有經驗者分析
     CAREER_ANALYSIS_ENTRY_LEVEL = "career_analysis_entry_level" # 無經驗者/轉職分析
     JOB_MATCHING = "job_matching" # 職缺匹配

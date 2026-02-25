@@ -30,10 +30,10 @@ def get_resume_config(task_type: TaskType, inputs: Dict[str, Any]) -> Optional[D
             ],
             "tasks": [
                 {
-                    "description": f"""
+                    "description": """
                     執行極其嚴苛的「第一輪履歷篩選與風險評估」。
-                    [使用者問卷]: {inputs.get('survey_json')} 
-                    [使用者履歷]: {inputs.get('resume_json')} 
+                    [使用者問卷]: {survey_json} 
+                    [使用者履歷]: {resume_json} 
                     
                     針對【清楚度、證據力、關鍵字、一致性】進行深度診斷。
                     規則：零推測、明確標註風險、提供具體改善建議。
@@ -58,9 +58,9 @@ def get_resume_config(task_type: TaskType, inputs: Dict[str, Any]) -> Optional[D
             ],
             "tasks": [
                 {
-                    "description": f"""
-                    將 [原始履歷內容]: {inputs.get('resume_json')} 
-                    根據 [履歷診斷分析結果]: {inputs.get('analysis_result')} 進行優化。
+                    "description": """
+                    將 [原始履歷內容]: {resume_json} 
+                    根據 [履歷診斷分析結果]: {analysis_result} 進行優化。
                     
                     核心挑戰：優化後的內容必須「聽起來仍然像使用者自己寫的」。
                     規則：風格建模、STAR 化處理、專業術語轉化、嚴禁新增捏造事實。

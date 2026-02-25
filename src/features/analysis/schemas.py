@@ -30,7 +30,7 @@ STANDARD_ROLES = [
 class ReportMetadata(BaseModel):
     user_id: str = Field(description="使用者 ID (需與輸入資料一致)")
     timestamp: str = Field(description="報告生成當下的 ISO 8601 時間戳記 (包含毫秒與時區 Z)")
-    version: str = Field(default="1.0", description="報告版本號，固定輸出 '1.0'")
+    version: str = Field(description="動態生成的報告版本號，反映該使用者的報告計數 (例如: 1.0, 2.0)")
 
 class RadarDimension(BaseModel):
     axis: str = Field(description=f"維度名稱，必須嚴格從此清單選取: {ALLOWED_AXES}")

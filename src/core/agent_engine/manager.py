@@ -7,6 +7,7 @@ from crewai import Agent, Task, Crew, Process, LLM
 
 # 引用 TaskType
 from .task_types import TaskType
+from src.core.database.supabase_client import get_next_version_number
 
 # 載入環境變數
 load_dotenv()
@@ -22,29 +23,42 @@ class CareerAgentManager:
         self.llm = LLM(model=model_name)
         self.qa_llm = LLM(model=model_name) 
 
-    def run_task(self, task_type_str: str, user_input: Dict[str, Any]) -> Dict[str, Any]:
+    def run_task(self, task_type_str: str, user_id: str, user_input: Dict[str, Any]) -> Dict[str, Any]:
         """
         執行特定任務的主要入口。
         """
-        print(f"🚀 Manager 收到請求: {task_type_str}")
+        print(f"🚀 Manager 收到請求: {task_type_str} | User ID: {user_id}")
+
+        # 1. 處理自動分流邏輯 (Auto-Dispatch)
+        if task_type_str == "career_analysis":
+            try:
+                survey_data = json.loads(user_input.get("survey_json", "{}"))
+                # 檢查 module_a 技術填寫紀錄 (q1_languages 是否有值且非空)
+                has_experience = (
+                    survey_data.get("module_a", {}).get("q1_languages") is not None and 
+                    len(survey_data.get("module_a", {}).get("q1_languages")) > 0
+                )
+                
+                if has_experience:
+                    task_type_str = "career_analysis_experienced"
+                    print("➡️ 自動識別為：有經驗者分析路徑")
+                else:
+                    task_type_str = "career_analysis_entry_level"
+                    print("➡️ 自動識別為：無經驗/轉職者分析路徑")
+            except Exception as e:
+                print(f"⚠️ 自動分流識別失敗，預設採用無經驗者路徑: {e}")
+                task_type_str = "career_analysis_entry_level"
 
         try:
             task_type = TaskType(task_type_str)
         except ValueError:
             return {"status": "error", "message": f"不支援的 task_type: {task_type_str}"}
 
-        # 0. 注入 分析報告所需 Metadata 資訊
+        # 0. 注入 分析報告所需 Metadata 資訊 (動態獲取版本號)
+        user_input["user_id"] = user_id
         user_input["current_timestamp"] = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='milliseconds').replace("+00:00", "Z")
-        user_input["report_version"] = "1.0"
+        user_input["report_version"] = get_next_version_number(user_id)
         
-        # 嘗試從 survey_json 提取 user_id 以便在 Prompt 中直接使用 {user_id}
-        if "survey_json" in user_input:
-            try:
-                survey_data = json.loads(user_input["survey_json"])
-                user_input["user_id"] = survey_data.get("user_id", "unknown_user")
-            except:
-                user_input["user_id"] = "unknown_user"
-
         # 1. 取得任務配置 (Configuration)
         config = self._get_process_config(task_type, user_input)
         
