@@ -59,7 +59,7 @@ class CareerAgentManager:
         user_input["current_timestamp"] = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='milliseconds').replace("+00:00", "Z")
         user_input["report_version"] = get_next_version_number(user_id)
         
-        # 1. 取得任務配置 (Configuration)
+        # 1. 取得任務配置 (Configuration) - 引入 config 找與對應 task_type 的藍圖
         config = self._get_process_config(task_type, user_input)
         
         if not config:
@@ -102,7 +102,7 @@ class CareerAgentManager:
         # A. Worker Tasks
         # 這裡支援多個 Worker 任務 (例如：先做技術分析 -> 再做心理分析)
         previous_tasks = []
-        for idx, task_cfg in enumerate(config["tasks"]):
+        for idx, task_cfg in enumerate(config["tasks"]): # enumerate() 函數會返回一個索引和對應的值
             worker_task = Task(
                 description=task_cfg["description"],
                 expected_output=task_cfg["expected_output"],
@@ -159,6 +159,7 @@ class CareerAgentManager:
     def _get_process_config(self, task_type: TaskType, inputs: Dict[str, Any]) -> Optional[Dict]:
         """
         配置工廠 (Configuration Factory)
+        user_input 進入內部邏輯，重新命名為 input (兩個變數為相同記憶體位置)
         """
         from .config import get_config_by_type
         return get_config_by_type(task_type, inputs)
