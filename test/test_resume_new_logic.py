@@ -64,6 +64,7 @@ def test_resume_flow():
     try:
         analysis_report = manager.run_task(
             task_type_str="resume_analysis",
+            user_id="test_user_001",
             user_input=analysis_inputs
         )
         print("[分析結果摘要]:")
@@ -79,6 +80,7 @@ def test_resume_flow():
         
         optimized_resume = manager.run_task(
             task_type_str="resume_opt",
+            user_id="test_user_001",
             user_input=optimization_inputs
         )
         print("[優化結果摘要]:")
