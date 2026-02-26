@@ -16,6 +16,9 @@ def parse_input_to_dict(input_str: str):
     if isinstance(input_str, dict):
         return input_str
         
+    if not isinstance(input_str, str):
+        return input_str
+
     # 移除字串前後可能的空白或 Markdown 標籤
     clean_str = input_str.strip().replace("```json", "").replace("```", "").strip()
 
@@ -34,8 +37,11 @@ def parse_input_to_dict(input_str: str):
                 try:
                     return json.loads(extracted)
                 except:
-                    return ast.literal_eval(extracted)
-            raise ValueError(f"無法解析輸入字串為字典格式。原始輸入的前 100 字元: {clean_str[:100]}")
+                    try:
+                        return ast.literal_eval(extracted)
+                    except:
+                        pass
+            return clean_str # 降級處理：如果解析失敗，回傳原始字串
 
 class CareerAnalysisTools:
     
@@ -45,7 +51,17 @@ class CareerAnalysisTools:
         根據 user_id 從資料庫中獲取該使用者最新的履歷內容 (JSON 格式字串)。
         """
         try:
-            return get_latest_resume(user_id)
+            # 魯棒性處理：LLM 有時會傳入 {"user_id": "1"} 或帶引號的 "1"
+            parsed_val = parse_input_to_dict(user_id)
+            
+            clean_id = user_id
+            if isinstance(parsed_val, dict):
+                clean_id = parsed_val.get("user_id") or parsed_val.get("id") or list(parsed_val.values())[0]
+            else:
+                clean_id = str(parsed_val).strip().strip("'").strip('"')
+            
+            print(f"DEBUG: fetch_resume_from_db 原始輸入: {user_id} -> 解析為: {clean_id}")
+            return get_latest_resume(str(clean_id))
         except Exception as e:
             return f"Error fetching resume: {str(e)}"
 

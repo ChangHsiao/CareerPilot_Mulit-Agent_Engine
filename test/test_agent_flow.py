@@ -90,47 +90,50 @@ def test_experienced_analysis():
 
 def test_analysis_with_db_resume():
     """
-    測試從資料庫抓取 user_id=1 的履歷並執行完整分析報告。
+    實測：Agent 從 DB 撈取履歷 + 配合虛擬問卷資料 + 自動儲存報告。
+    符合：GAP_ANALYSIS_STORAGE_PLAN.md 規範。
     """
-    print("\n\n====== TEST CASE: ANALYSIS WITH DB RESUME (User ID: 1) ======")
+    print("\n\n====== 實測：自動化流程 (DB 履歷 + 虛擬資料 + 自動儲存) ======")
+    from src.core.database.supabase_client import get_supabase_client
+    
+    user_id = "1" # 指定測試 User ID
     manager = CareerAgentManager(model_name="o3-mini")
+    supabase = get_supabase_client()
 
-    # 模擬問卷資料 (Experienced)
+    # 1. 定義虛擬資料 (模擬前端傳入的問卷與心理測驗結果)
     INPUT_CAREER_DATA = {
         "module_a": {
-            "q1_languages": [{"name": "Python", "score": 5}, {"name": "SQL", "score": 4}],
-            "q2_frontend": "unfamiliar",
-            "q3_backend": "distributed_system",
-            "q4_database": ["rdbms_sql"],
-            "q5_devops": "docker_compose",
-            "q6_ai_data": "api_consumer",
-            "q7_security": "framework_default",
-            "q8_domain": "FinTech"
-        },
-        "module_b": {
-            "q9_troubleshoot": "incident_analysis",
-            "q10_tech_choice": "tradeoff_analysis",
-            "q11_communication": "alternative_solution",
-            "q12_code_review": "architecture_solid",
-            "q13_learning": "deep_dive_sharing",
-            "q14_process": "process_optimization",
-            "q15_english": "global_comm"
-        },
-        "module_c": {
-            "q16_current_level": "senior",
-            "q17_target_role": "backend",
-            "q18_industry": "product_company",
-            "q19_search_status": "passive_open"
-        },
-        "module_d": {
-            "q20_values_top3": ["technical_growth", "social_impact"],
-            "q21_pressure": "consider_short_term",
-            "q22_career_type": "specialist",
-            "q23_learning_style": ["official_docs"]
-        }
+        "q1_languages": [{"name": "Python", "score": 5}, {"name": "SQL", "score": 4}, {"name": "Git", "score": 4}],
+        "q2_frontend": "unfamiliar",
+        "q3_backend": "distributed_system",
+        "q4_database": ["rdbms_sql", "key_value_cache"],
+        "q5_devops": "k8s_cicd",
+        "q6_ai_data": "api_consumer",
+        "q7_security": "framework_default",
+        "q8_domain": "電子商務"
+    },
+    "module_b": {
+        "q9_troubleshoot": "incident_analysis",
+        "q10_tech_choice": "tradeoff_analysis",
+        "q11_communication": "alternative_solution",
+        "q12_code_review": "architecture_solid",
+        "q13_learning": "deep_dive_sharing",
+        "q14_process": "process_optimization",
+        "q15_english": "global_comm"
+    },
+    "module_c": {
+        "q16_current_level": "senior",
+        "q17_target_role": "backend",
+        "q18_industry": "product_company",
+        "q19_search_status": "passive_open"
+    },
+    "module_d": {
+        "q20_values_top3": ["technical_growth", "social_impact", "financial_reward"],
+        "q21_pressure": "consider_short_term",
+        "q22_career_type": "specialist",
+        "q23_learning_style": ["official_docs", "hands_on_projects"]
     }
-
-    # 模擬心理測驗資料
+    }
     INPUT_TRAIT_DATA = {
         "user_id": "1", # Assuming same user
     "trait_raw_responses": {"Q1": "C", "Q2": "A", "Q3": "B", "Q4": "C", "Q5": "A", "Q6": "B", "Q7": "B", "Q8": "A", "Q9": "A", "Q10": "A"},
@@ -147,19 +150,40 @@ def test_analysis_with_db_resume():
     "trait_created_at": "2026-02-15T10:00:00Z"
     }
 
-    # 注意：這裡不提供 resume_json，讓 Agent 透過工具去抓取
+    # 注意：這裡「不提供」resume_json，強迫 Agent 去撈資料庫裡的 user_id=1 履歷
     user_input = {
         "survey_json": json.dumps(INPUT_CAREER_DATA),
         "trait_json": json.dumps(INPUT_TRAIT_DATA)
-        # "resume_json" 被刻意省略，測試 Fetch Resume From Database 工具
     }
 
-    # 執行任務
-    # 我們使用 "career_analysis" 讓 Manager 自動分流，或者直接指定 "career_analysis_experienced"
-    result = manager.run_task("career_analysis_experienced", "1", user_input)
+    # 2. 執行任務
+    print(f"🚀 啟動任務... Agent 將自主撈取 User {user_id} 的履歷內容並進行分析。")
+    result = manager.run_task("career_analysis_experienced", user_id, user_input)
     
-    print("\n🎉 Analysis Result (from DB Resume):")
-    print(json.dumps(result, indent=2, ensure_ascii=False))
+    print("\n🎉 分析完成！")
+
+    # 3. 驗證資料庫儲存 (這是關鍵驗證點)
+    print(f"🧪 驗證點：正在檢查 Supabase 中的 career_analysis_report 表...")
+    try:
+        # 查詢最新的一筆紀錄，確認是否為剛剛存入的
+        response = supabase.table("career_analysis_report") \
+            .select("*") \
+            .eq("user_id", user_id) \
+            .order("generated_at", desc=True) \
+            .limit(1) \
+            .execute()
+        
+        if response.data:
+            record = response.data[0]
+            print(f"✅ 成功！已從資料庫撈到最新生成的報告紀錄。")
+            print(f"   - 紀錄 ID: {record.get('id')}")
+            print(f"   - 報告版本: {record.get('report_version')}")
+            print(f"   - 存入時間: {record.get('generated_at')}")
+            print(f"   - 目標職位: {record.get('target_position')}")
+        else:
+            print("❌ 失敗：資料庫中找不到剛剛存入的報告。請檢查 Handler 邏輯。")
+    except Exception as e:
+        print(f"❌ 驗證過程中發生錯誤: {e}")
 
 def test_resume_analysis():
     print("\n\n====== TEST CASE: RESUME CRITIQUE ======")

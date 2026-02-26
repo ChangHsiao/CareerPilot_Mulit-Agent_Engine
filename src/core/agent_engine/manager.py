@@ -7,7 +7,8 @@ from crewai import Agent, Task, Crew, Process, LLM
 
 # 引用 TaskType
 from .task_types import TaskType
-from src.core.database.supabase_client import get_next_version_number
+from .result_handlers import HandlerRegistry
+from src.core.database.supabase_client import get_next_version_number, get_supabase_client
 
 # 載入環境變數
 load_dotenv()
@@ -22,6 +23,10 @@ class CareerAgentManager:
         # 初始化共用的 LLM 設定 (使用 OpenAI o3-mini 模型)
         self.llm = LLM(model=model_name)
         self.qa_llm = LLM(model=model_name) 
+        
+        # 初始化 Supabase Client 與結果處理註冊器
+        self.supabase = get_supabase_client()
+        self.handler_registry = HandlerRegistry(self.supabase)
 
     def run_task(self, task_type_str: str, user_id: str, user_input: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -151,7 +156,22 @@ class CareerAgentManager:
         
         # 5. 回傳 Pydantic 模型轉出的 Dict
         try:
-            return result.pydantic.model_dump()
+            pydantic_result = result.pydantic.model_dump()
+            
+            # --- 自動回存資料庫 (整合點) ---
+            try:
+                # 取得該任務對應的 Handler
+                handler = self.handler_registry.get_handler(task_type)
+                if handler:
+                    # 執行儲存 (user_id 已包含在 **user_input 中)
+                    handler.process(pydantic_result, **user_input)
+                    print(f"✅ {task_type_str} 資料已成功自動存入資料庫")
+            except Exception as e:
+                # ⚠️ 儲存失敗不影響主流程，僅紀錄日誌
+                print(f"⚠️ [Storage Integration] 自動儲存失敗，僅回傳生成資料: {e}")
+            
+            return pydantic_result
+
         except AttributeError:
              # Fallback: 如果沒有成功轉成 Pydantic (極少發生)，回傳 raw text
             return {"status": "partial_success", "raw_content": result.raw}

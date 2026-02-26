@@ -32,11 +32,10 @@ def get_next_version_number(user_id: str) -> str:
     """
     try:
         client = get_supabase_client()
-        # 假設報告存放在 'user_skill' 表
         # 使用 count="exact" 來獲取精確數量
         resp = (
             client
-            .table("user_skill")
+            .table("career_analysis_report")
             .select("user_id", count="exact")
             .eq("user_id", user_id)
             .execute()
