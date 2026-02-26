@@ -1,12 +1,54 @@
 # tools.py
 import json
+import ast
+import re
 from crewai.tools import tool
 # 假設這是你的原始模組
 from src.features.analysis.calculator import CareerAnalyzer
 from src.features.matching.matcher import JobMatcher
+from src.core.database.supabase_client import get_latest_resume
+
+def parse_input_to_dict(input_str: str):
+    """
+    輔助函式：將輸入字串解析為 dict。
+    支援標準 JSON (雙引號) 與 Python Literal (單引號)。
+    """
+    if isinstance(input_str, dict):
+        return input_str
+        
+    # 移除字串前後可能的空白或 Markdown 標籤
+    clean_str = input_str.strip().replace("```json", "").replace("```", "").strip()
+
+    try:
+        # 1. 嘗試標準 JSON
+        return json.loads(clean_str)
+    except json.JSONDecodeError:
+        try:
+            # 2. 嘗試 Python literal_eval (處理單引號的情況)
+            return ast.literal_eval(clean_str)
+        except (ValueError, SyntaxError):
+            # 3. 如果兩者都失敗，嘗試使用正則表達式提取第一個 JSON 對象 {...}
+            match = re.search(r'\{.*\}', clean_str, re.DOTALL)
+            if match:
+                extracted = match.group(0)
+                try:
+                    return json.loads(extracted)
+                except:
+                    return ast.literal_eval(extracted)
+            raise ValueError(f"無法解析輸入字串為字典格式。原始輸入的前 100 字元: {clean_str[:100]}")
 
 class CareerAnalysisTools:
     
+    @tool("Fetch Resume From Database")
+    def fetch_resume_from_db(user_id: str):
+        """
+        根據 user_id 從資料庫中獲取該使用者最新的履歷內容 (JSON 格式字串)。
+        """
+        try:
+            return get_latest_resume(user_id)
+        except Exception as e:
+            return f"Error fetching resume: {str(e)}"
+
     @tool("Calculate Technical Vectors")
     def calculate_tech_vectors(user_json_str: str):
         """
@@ -19,23 +61,7 @@ class CareerAnalysisTools:
         }
 
         try:
-            # 處理可能的多個 JSON 物件
-            try:
-                user_data = json.loads(user_json_str)
-            except json.JSONDecodeError as jde:
-                # 如果發生 Extra data (說明有兩個 JSON 物件)，嘗試解析第一個
-                if "Extra data" in str(jde):
-                    import re
-                    # 簡單的正則表達式提取第一個 JSON 對象 {...}
-                    match = re.search(r'\{.*\}', user_json_str, re.DOTALL)
-                    if match:
-                        # 嘗試解析第一個匹配到的 {}，但 JSONDecodeError 可能發生在物件之間
-                        # 所以我們用 json.JSONDecoder().raw_decode(user_json_str) 更專業
-                        user_data, _ = json.JSONDecoder().raw_decode(user_json_str)
-                    else:
-                        raise jde
-                else:
-                    raise jde
+            user_data = parse_input_to_dict(user_json_str)
 
             # 檢查是否為無經驗者 (如果沒有 module_a 或是 q1_languages 為空)
             ma = user_data.get("module_a", {})
@@ -60,8 +86,8 @@ class CareerAnalysisTools:
         計算使用者能力向量與目標職位的匹配分數 (0-100)。
         """
         try:
-            # 安全起見實際專案可用 json.loads
-            vectors = eval(vectors_str) 
+            # 使用輔助函式解析，確保支援單/雙引號
+            vectors = parse_input_to_dict(vectors_str)
             score = JobMatcher.calculate_match_score(vectors, target_role)
             return str(score)
         except Exception as e:

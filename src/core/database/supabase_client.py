@@ -51,3 +51,34 @@ def get_next_version_number(user_id: str) -> str:
     except Exception as e:
         print(f"⚠️ 獲取報告版本號失敗，預設回傳 1.0: {e}")
         return "1.0"
+
+def get_latest_resume(user_id: str) -> str:
+    """
+    根據 user_id 獲取最新的履歷內容 (JSON 格式字串)。
+    """
+    try:
+        client = get_supabase_client()
+        # 查詢 resume 表，按時間降序排列，取第 1 筆
+        response = (
+            client
+            .table("resume") \
+          .select("structured_data") \
+          .eq("user_id", user_id) \
+          .order("created_at", desc=True) \
+          .limit(1) \
+          .single() \
+          .execute()
+        )
+        
+        if not response.data:
+            return "❌ 找不到該使用者的履歷紀錄。"
+        
+        # 確保回傳的是 JSON 格式字串 (若資料庫存的是物件)
+        import json
+        resume_data = response.data.get("structured_data")
+        if isinstance(resume_data, dict):
+            return json.dumps(resume_data, ensure_ascii=False)
+        return str(resume_data)
+        
+    except Exception as e:
+        return f"❌ 獲取履歷失敗: {str(e)}"

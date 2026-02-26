@@ -54,6 +54,7 @@ def create_tech_lead_agent() -> Agent:
         goal=TECH_LEAD_GOAL,
         backstory=TECH_LEAD_BACKSTORY,
         tools=[
+            CareerAnalysisTools.fetch_resume_from_db,
             CareerAnalysisTools.calculate_tech_vectors,
             CareerAnalysisTools.calculate_match_score
         ],
@@ -89,7 +90,7 @@ def create_discovery_mentor_agent() -> Agent:
         role=MENTOR_ROLE,
         goal=MENTOR_GOAL,
         backstory=MENTOR_BACKSTORY,
-        tools=[],
+        tools=[CareerAnalysisTools.fetch_resume_from_db],
         verbose=True,
         allow_delegation=False
     )

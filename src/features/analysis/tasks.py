@@ -32,12 +32,14 @@ CAREER_STAGE_MAPPING = """
 """
 
 TECH_VERIFICATION_DESCRIPTION = """計算技術分數與目標職位匹配度，並驗證履歷真實性。
+[使用者 ID]: {user_id}
 [問卷資料]: {survey_json}
-[履歷資料]: {resume_json}
+
 請依序執行：
-1. 使用「問卷資料」呼叫工具計算 D1-D6 技術分數。
-2. 根據算出的 D1-D6 分數與問卷中的目標職位 (target_role)，呼叫工具計算『匹配分數 (Match Score)』。
-3. 對比「履歷資料」內容進行真實性驗證，若履歷證據與問卷分數不符，請註明落差。"""
+1. **獲取履歷**：使用 'Fetch Resume From Database' 工具獲取使用者 {user_id} 的最新履歷資料。
+2. **算分**：使用「問卷資料」呼叫工具計算 D1-D6 技術分數。
+3. **匹配**：根據算出的 D1-D6 分數與問卷中的目標職位 (target_role)，呼叫工具計算『匹配分數 (Match Score)』。
+4. **驗證**：對比「獲取到的履歷資料」內容進行真實性驗證，若履歷證據與問卷分數不符，請註明落差。"""
 
 TRAIT_ANALYSIS_DESCRIPTION = """分析人格特質。
 資料: {trait_json}
@@ -55,11 +57,12 @@ FINAL_REPORT_DESCRIPTION = f"""綜合技術與心理分析，生成最終的 Car
 """
 
 ENTRY_LEVEL_TRANSITION_DESCRIPTION = f"""分析履歷中的非技術經驗，進行『技能轉譯』。
-資料: {{resume_json}}
+[使用者 ID]: {{user_id}}
 
 **核心任務**：
-1. **Skill Translation (技能轉譯)**: 找出至少 3 個具體行為並對照程式概念。
-2. **Role Recommendation (職位推薦)**: 從標準清單中推薦職位並說明理由。標準清單：[{STANDARD_ROLES_STR}]。
+1. **獲取履歷**：必須先使用 'Fetch Resume From Database' 工具獲取使用者 {{user_id}} 的最新履歷資料。
+2. **Skill Translation (技能轉譯)**: 針對獲取到的履歷內容，找出至少 3 個具體行為並對照程式概念。
+3. **Role Recommendation (職位推薦)**: 從標準清單中推薦職位並說明理由。標準清單：[{STANDARD_ROLES_STR}]。
 """
 
 ENTRY_LEVEL_FINAL_DESCRIPTION = f"""根據轉譯結果與特質，推薦職位並規劃學習路徑。
