@@ -23,7 +23,7 @@ def get_resume_config(task_type: TaskType, inputs: Dict[str, Any]) -> Optional[D
                     "role": analyst.role,
                     "goal": analyst.goal,
                     "backstory": analyst.backstory,
-                    "tools": []
+                    "tools": analyst.tools # <--- 補齊工具
                 }
             ],
             "tasks": [
@@ -34,7 +34,7 @@ def get_resume_config(task_type: TaskType, inputs: Dict[str, Any]) -> Optional[D
             ]
         }
 
-    # === 2. 履歷優化 (RESUME_OPTIMIZATION) ===
+    # === 2. 履歷優化 (RESUME_OPT) ===
     elif task_type == TaskType.RESUME_OPT:
         # 建立零件
         optimizer = create_optimization_strategy_consultant()
@@ -47,7 +47,7 @@ def get_resume_config(task_type: TaskType, inputs: Dict[str, Any]) -> Optional[D
                     "role": optimizer.role,
                     "goal": optimizer.goal,
                     "backstory": optimizer.backstory,
-                    "tools": []
+                    "tools": optimizer.tools # <--- 補齊工具
                 }
             ],
             "tasks": [

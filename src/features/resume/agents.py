@@ -1,4 +1,5 @@
 from crewai import Agent
+from .tools import FetchResumeTool, FetchSurveyTool, FetchResumeAnalysisTool
 
 # ==========================================
 # Agent 定義常數 (單一事實來源)
@@ -30,6 +31,10 @@ def create_analysis_consultant() -> Agent:
         role=ANALYSIS_CONSULTANT_ROLE,
         goal=ANALYSIS_CONSULTANT_GOAL,
         backstory=ANALYSIS_CONSULTANT_BACKSTORY,
+        tools=[
+            FetchResumeTool(), 
+            FetchSurveyTool()
+        ],
         verbose=True,
         allow_delegation=False
     )
@@ -40,6 +45,10 @@ def create_optimization_strategy_consultant() -> Agent:
         role=OPTIMIZATION_CONSULTANT_ROLE,
         goal=OPTIMIZATION_CONSULTANT_GOAL,
         backstory=OPTIMIZATION_CONSULTANT_BACKSTORY,
+        tools=[
+            FetchResumeTool(), 
+            FetchResumeAnalysisTool()
+        ],
         verbose=True,
         allow_delegation=False
     )

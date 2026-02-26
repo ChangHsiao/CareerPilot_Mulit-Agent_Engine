@@ -19,10 +19,10 @@ class CareerAgentManager:
     負責根據 TaskType 組裝對應的 Agent 與 Task，並執行 CrewAI 流程。
     """
     
-    def __init__(self, model_name: str = "o3-mini"):
+    def __init__(self, model_name: str = "gpt-4o", temp: float = 0.7):
         # 初始化共用的 LLM 設定 (使用 OpenAI o3-mini 模型)
-        self.llm = LLM(model=model_name)
-        self.qa_llm = LLM(model=model_name) 
+        self.llm = LLM(model=model_name, temperature=temp)
+        self.qa_llm = LLM(model=model_name, temperature=0.1) 
         
         # 初始化 Supabase Client 與結果處理註冊器
         self.supabase = get_supabase_client()
