@@ -29,7 +29,8 @@ def test_resume_system_integration():
     manager = CareerAgentManager()
     
     # 指定測試用的 user_id (請確保 Supabase 中 user_id='1' 有對應的 resume 與 career_survey 資料)
-    user_id = "1"
+    user_id = "2"
+    task_type_str = "resume_analysis"
     
     # ---------------------------------------------------------
     # PART 1: 履歷分析 (RESUME_ANALYSIS)
@@ -39,13 +40,14 @@ def test_resume_system_integration():
     
     # 前端傳入的 user_input
     analysis_input = {
-        "user_id": user_id
+        "user_id": user_id,
+        "task_type_str": task_type_str
     }
     
     try:
         # 執行任務
         analysis_result = manager.run_task(
-            task_type_str="resume_analysis",
+            task_type_str=task_type_str,
             user_id=user_id,
             user_input=analysis_input
         )
