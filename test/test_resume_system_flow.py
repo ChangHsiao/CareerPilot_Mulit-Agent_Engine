@@ -29,27 +29,25 @@ def test_resume_system_integration():
     manager = CareerAgentManager()
     
     # 指定測試用的 user_id (請確保 Supabase 中 user_id='1' 有對應的 resume 與 career_survey 資料)
-    user_id = "2"
+
+    # 前端傳入的 user_input
     task_type_str = "resume_analysis"
+    user_input = {
+        "user_id": 4
+    }
     
     # ---------------------------------------------------------
     # PART 1: 履歷分析 (RESUME_ANALYSIS)
     # ---------------------------------------------------------
     print(f"[任務 1] 啟動『履歷深度分析』...")
-    print(f"👉 目標用戶: {user_id}")
+    print(f"👉 目標用戶: {user_input}")
     
-    # 前端傳入的 user_input
-    analysis_input = {
-        "user_id": user_id,
-        "task_type_str": task_type_str
-    }
     
     try:
         # 執行任務
         analysis_result = manager.run_task(
             task_type_str=task_type_str,
-            user_id=user_id,
-            user_input=analysis_input
+            user_input=user_input
         )
         
         print("✅ [PART 1] 履歷分析任務執行成功！")
@@ -66,19 +64,20 @@ def test_resume_system_integration():
     # ---------------------------------------------------------
     # PART 2: 履歷優化 (RESUME_OPT)
     # ---------------------------------------------------------
-    print(f"[任務 2] 啟動『履歷內容優化』...")
-    print(f"👉 目標用戶: {user_id}")
-    
     # 優化任務輸入
+    task_type_str="resume_opt"
     opt_input = {
-        "user_id": user_id
+        "user_id": 4
     }
+    
+    print(f"[任務 2] 啟動『履歷內容優化』...")
+    print(f"👉 目標用戶: {opt_input}")
+    
     
     try:
         # 執行任務
         opt_result = manager.run_task(
-            task_type_str="resume_opt",
-            user_id=user_id,
+            task_type_str=task_type_str,
             user_input=opt_input
         )
         

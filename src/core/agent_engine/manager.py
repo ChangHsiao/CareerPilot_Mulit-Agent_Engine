@@ -28,10 +28,15 @@ class CareerAgentManager:
         self.supabase = get_supabase_client()
         self.handler_registry = HandlerRegistry(self.supabase)
 
-    def run_task(self, task_type_str: str, user_id: str, user_input: Dict[str, Any]) -> Dict[str, Any]:
+    def run_task(self, task_type_str: str, user_input: Dict[str, Any]) -> Dict[str, Any]:
         """
         執行特定任務的主要入口。
         """
+        # 1. 從字典中提取 user_id
+        user_id = user_input.get("user_id")
+        if not user_id:
+            return {"status": "error", "message": "user_input 中缺少 user_id"}
+            
         print(f"🚀 Manager 收到請求: {task_type_str} | User ID: {user_id}")
 
         # 1. 處理自動分流邏輯 (Auto-Dispatch)
@@ -60,7 +65,7 @@ class CareerAgentManager:
             return {"status": "error", "message": f"不支援的 task_type: {task_type_str}"}
 
         # 0. 注入 分析報告所需 Metadata 資訊 (動態獲取版本號)
-        user_input["user_id"] = user_id
+        # user_input["user_id"] = user_id
         user_input["current_timestamp"] = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='milliseconds').replace("+00:00", "Z")
         user_input["report_version"] = get_next_version_number(user_id)
         

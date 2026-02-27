@@ -31,7 +31,7 @@ def get_project_config(task_type: TaskType, inputs: Dict[str, Any]) -> Dict[str,
     
     return {
         "agents": [
-            {"role": architect.role, "goal": architect.goal, "backstory": architect.backstory},
+            {"role": architect.role, "goal": architect.goal, "backstory": architect.backstory, "tools": architect_tools},
             {"role": qa_expert.role, "goal": qa_expert.goal, "backstory": qa_expert.backstory}
         ],
         "tasks": [

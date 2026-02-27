@@ -152,8 +152,8 @@ def test_analysis_with_db_resume():
 
     # 注意：這裡「不提供」resume_json，強迫 Agent 去撈資料庫裡的 user_id=1 履歷
     user_input = {
-        "survey_json": json.dumps(INPUT_CAREER_DATA),
-        "trait_json": json.dumps(INPUT_TRAIT_DATA)
+        "survey_json": INPUT_CAREER_DATA,
+        "trait_json": INPUT_TRAIT_DATA
     }
 
     # 2. 執行任務
