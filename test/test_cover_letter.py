@@ -12,12 +12,13 @@ def test_cover_letter_flow():
     manager = CareerAgentManager()
     
     # 模擬前端傳入的參數
-    user_id = "1"
+    user_id = "2"
+    task_type_str = "cover_letter"
     
     # 使用指定的 optimization_id 與 job_id
     user_input = {
-        "optimization_id": "5", 
-        "job_id": 46 # 假設 job_id 為 46 (嚮樂科技 - 軟體設計工程師)
+        "optimization_id": "7", 
+        "job_id": 60 # 假設 job_id 為 60 (iOS / Mac / tvOS App 軟體研發工程師)
     }
     
     print(f">>> 啟動 Cover Letter 推薦測試...")
@@ -28,7 +29,7 @@ def test_cover_letter_flow():
         # 執行任務：Manager 會根據 task_type "cover_letter" 調用對應配置
         # 並讓 Agent 使用工具從 Supabase 抓取資料
         final_result = manager.run_task(
-            task_type_str="cover_letter",
+            task_type_str=task_type_str,
             user_id=user_id,
             user_input=user_input,
         )

@@ -7,7 +7,7 @@ load_dotenv()
 
 def test_experienced_analysis():
     print("\n\n====== TEST CASE: EXPERIENCED ANALYSIS ======")
-    manager = CareerAgentManager(model_name="o3-mini")
+    manager = CareerAgentManager()
 
     INPUT_CAREER_DATA = {
     "module_a": {
@@ -97,7 +97,7 @@ def test_analysis_with_db_resume():
     from src.core.database.supabase_client import get_supabase_client
     
     user_id = "1" # 指定測試 User ID
-    manager = CareerAgentManager(model_name="o3-mini")
+    manager = CareerAgentManager()
     supabase = get_supabase_client()
 
     # 1. 定義虛擬資料 (模擬前端傳入的問卷與心理測驗結果)
