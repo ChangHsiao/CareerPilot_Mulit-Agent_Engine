@@ -55,7 +55,7 @@ class GapAnalysisHandler(BaseResultHandler):
             "user_id": user_id,
             "report_version": data.get("report_metadata", {}).get("version", "1.0"),
             "generated_at": data.get("report_metadata", {}).get("timestamp"),
-            "target_position": data.get("gap_analysis", {}).get("target_position", {}).get("role"),
+            "target_position": data.get("target_position"),
             
             # JSONB 區塊
             "preliminary_summary": data.get("preliminary_summary"),

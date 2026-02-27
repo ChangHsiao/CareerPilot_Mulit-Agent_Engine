@@ -1,10 +1,11 @@
 from crewai import Task
 from .schemas import SideProject
 
-def get_project_design_task(agent) -> Task:
+def get_project_design_task(agent, tools: list = None) -> Task:
     return Task(
         description="""
-        身為職涯專案架構師，你必須根據 [能力缺口分析結果]: {skill_gap_result}，設計一個具備「職場可解釋性」的實戰專案。
+        身為職涯專案架構師，請先使用 FetchUserGapAnalysis 工具，傳入使用者 ID：{user_id} 以獲取缺口分析資料。
+        接著根據取得之 [能力缺口分析結果]，設計一個具備「職場可解釋性」的實戰專案。
         
         這個專案不是為了學習，而是為了**「在履歷上證明能力」**。設計邏輯必須符合以下規則：
         1. **MVP（最小可行性）起步**：從最核心、最能證明該缺口能力的基礎功能開始。
@@ -19,10 +20,11 @@ def get_project_design_task(agent) -> Task:
         2. 專案必須具備真實世界的商業邏輯，讓面試官有興趣追問細節。
         """,
         expected_output="一份包含專案名稱、技術棧與階段劃分的詳細專案計畫書草案。",
-        agent=agent
+        agent=agent,
+        tools=tools or []
     )
 
-def get_project_refinement_task(agent, context_tasks) -> Task:
+def get_project_refinement_task(agent, context_tasks, tools: list = None) -> Task:
     return Task(
         description="""
         審核上一個任務產出的專案計畫書。
@@ -33,5 +35,6 @@ def get_project_refinement_task(agent, context_tasks) -> Task:
         """,
         expected_output="最終審核通過的 Side Project 計畫 JSON 報告。",
         agent=agent,
-        context=context_tasks
+        context=context_tasks,
+        tools=tools or []
     )
