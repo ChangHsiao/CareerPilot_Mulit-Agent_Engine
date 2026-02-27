@@ -14,6 +14,11 @@ from .tasks import (
     create_discovery_mentor_task,
     create_entry_level_final_task
 )
+from .tools import (
+    FetchResumeFromDBTool,
+    CalculateTechVectorsTool,
+    CalculateMatchScoreTool
+)
 
 def get_analysis_config(task_type: TaskType, inputs: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     """
@@ -23,13 +28,16 @@ def get_analysis_config(task_type: TaskType, inputs: Dict[str, Any]) -> Optional
     
     # === 設定 1: 有經驗者職涯分析 ===
     if task_type == TaskType.CAREER_ANALYSIS_EXPERIENCED:
+        # 初始化工具
+        tech_tools = [FetchResumeFromDBTool(), CalculateTechVectorsTool(), CalculateMatchScoreTool()]
+
         # 初始化 Agent 零件
-        tech_lead = create_tech_lead_agent()
+        tech_lead = create_tech_lead_agent(tools=tech_tools)
         psychologist = create_psychologist_agent()
         advisor = create_career_advisor_agent()
 
         # 初始化 Task 零件
-        tech_task = create_tech_verification_task(tech_lead)
+        tech_task = create_tech_verification_task(tech_lead, tools=tech_tools)
         trait_task = create_trait_analysis_task(psychologist)
         final_task = create_final_report_task(advisor)
 
@@ -57,12 +65,15 @@ def get_analysis_config(task_type: TaskType, inputs: Dict[str, Any]) -> Optional
 
     # === 設定 2: 無經驗/轉職者分析 ===
     elif task_type == TaskType.CAREER_ANALYSIS_ENTRY_LEVEL:
+        # 初始化工具
+        mentor_tools = [FetchResumeFromDBTool()]
+
         # 初始化 Agent 零件
-        mentor = create_discovery_mentor_agent()
+        mentor = create_discovery_mentor_agent(tools=mentor_tools)
         advisor = create_career_advisor_agent()
 
         # 初始化 Task 零件
-        transition_task = create_discovery_mentor_task(mentor)
+        transition_task = create_discovery_mentor_task(mentor, tools=mentor_tools)
         final_entry_task = create_entry_level_final_task(advisor)
 
         return {

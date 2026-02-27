@@ -33,6 +33,22 @@ class GapAnalysisHandler(BaseResultHandler):
         # 2. 身份識別：優先從 kwargs 拿，若無則從 metadata 提取
         user_id = kwargs.get("user_id") or data.get("report_metadata", {}).get("user_id")
         
+        target_resume_id = kwargs.get("resume_id")
+        if not target_resume_id and user_id:
+            try:
+                resume_info = self.supabase.table("resume") \
+                    .select("resume_id") \
+                    .eq("user_id", user_id) \
+                    .order("created_at", desc=True) \
+                    .limit(1) \
+                    .single() \
+                    .execute()
+                
+                if resume_info.data:
+                    target_resume_id = resume_info.data.get('resume_id')
+            except Exception as e:
+                print(f"⚠️ [GapAnalysisHandler] 無法自動獲取 resume_id: {e}")
+
         # 3. 欄位精準映射 (Mapping)
         # 根據資料表結構，將巢狀的 Pydantic 數據扁平化或存入 JSONB 欄位
         payload = {
@@ -49,7 +65,7 @@ class GapAnalysisHandler(BaseResultHandler):
             
             # 關聯鍵
             # "survey_id": kwargs.get("survey_id"),
-            "resume_id": kwargs.get("resume_id")
+            "resume_id": target_resume_id
         }
 
         # 4. 資料清洗：剔除 None 值
