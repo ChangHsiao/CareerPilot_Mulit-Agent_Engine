@@ -44,7 +44,8 @@ def test_full_job_matching_flow():
         TEST_USER_ID = 1
         filters = {
             "city": ["台北市", "新北市"], 
-            "salary_min": 40000
+            "salary_min": 40000,
+            "salary_max": 60000
         }
         
         # 模擬使用者的六維能力分數 (D1-D6)

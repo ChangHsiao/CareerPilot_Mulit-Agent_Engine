@@ -15,6 +15,13 @@ class JobMatchRetriever:
         """
         must_conditions = []
 
+        # [新增] 0. 強制篩選已貼標職缺 (is_labeled == true)
+        must_conditions.append(
+            models.FieldCondition(
+                key="is_labeled", 
+                match=models.MatchValue(value=True)
+            )
+        )
         # 1. 處理地區 (City) -> 支援多選
         if "city" in filters and filters["city"]:
             must_conditions.append(
