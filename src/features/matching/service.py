@@ -28,11 +28,70 @@ class CareerMatchingService:
 
     # 修改點 2：函數入口新增 document_id 與 source_type 參數
     # (註：如果前端是傳 Pydantic DTO 物件進來，這裡可以直接改成接收 request: JobMatchRequest)
-    def find_best_jobs(self, user_id: int, document_id: int, source_type: str, filters: dict, user_6d_profile: dict) -> List[dict]:
+    def find_best_jobs(self, user_id: int, document_id: int, source_type: str, filters: dict) -> List[dict]:
         """
         執行完整的三階段匹配流程。
         """
         try:
+            # ==========================================
+            # 🚀 Phase 0: 從 Supabase 提取最新六維分析報告
+            # ==========================================
+            print(f"正在從 Supabase 取得 User {user_id} 的最新六維能力報告...")
+            
+            # 依據 generated_at 降冪排序，加上 limit(1) 取得最新的一份報告
+            report_response = (
+                self.supabase_client.table('career_analysis_report')
+                .select('radar_chart, report_version')
+                .eq('user_id', user_id)
+                .execute()
+            )
+
+            # 2. 在 Python 端進行安全排序與篩選 (避開 SQL 字串排序陷阱)
+            # 將 report_version 轉為 float 比較 (例如 "2.0" -> 2.0, "10.0" -> 10.0)
+            # 若某些舊資料沒有 report_version，預設給 "0.0"
+            try:
+                latest_report = max(
+                    report_response.data, 
+                    key=lambda x: float(x.get('report_version') or '0.0')
+                )
+            except ValueError:
+                # 防呆：如果版本號出現 "v1.0" 這種無法直接轉 float 的字串，退回安全的字串比對
+                print("⚠️ 警告：報告版本號無法轉換為浮點數，將使用字串排序。")
+                latest_report = max(
+                    report_response.data, 
+                    key=lambda x: str(x.get('report_version') or '0.0')
+                )
+            
+            print(f"✅ 成功鎖定最新版本報告 (版本號: {latest_report.get('report_version')})")
+
+            if not report_response.data:
+                raise ValueError(f"❌ 找不到 User {user_id} 的職涯分析報告！請使用者先完成問卷與報告生成。")
+
+            # 萃取 radar_chart 並進行欄位映射 (Mapping)
+            radar_chart = report_response.data[0].get('radar_chart', {})
+            dimensions = radar_chart.get('dimensions', [])
+            
+            # 定義從中文標籤到系統 D1~D6 的對應表
+            # (架構師註：這樣做可以保護 matcher.py 完全不需修改)
+            axis_mapping = {
+                "前端開發": "D1",
+                "後端開發": "D2",
+                "運維部署": "D3",
+                "AI與數據": "D4",
+                "工程品質": "D5",
+                "軟實力": "D6"
+            }
+            
+            user_6d_profile = {}
+            for dim in dimensions:
+                axis_name = dim.get("axis")
+                score = dim.get("score", 0)
+                mapped_key = axis_mapping.get(axis_name)
+                if mapped_key:
+                    user_6d_profile[mapped_key] = score
+                    
+            print(f"✅ 成功載入六維能力分數: {user_6d_profile}")
+
             # ==========================================
             # Phase 1: Qdrant 混合召回 (撈取 Top 50 候選名單)
             # ==========================================

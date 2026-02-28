@@ -34,7 +34,7 @@ class JobMatchRequest(BaseModel):
     source_type: Literal["RESUME", "OPTIMIZATION"] = Field(..., description="履歷來源：原始或優化")
 
     filters: Optional[JobMatchFilters] = Field(default_factory=JobMatchFilters)
-    user_6d_profile: User6DProfile = Field(..., description="使用者的六維職能分數")
+    # user_6d_profile: User6DProfile = Field(..., description="使用者的六維職能分數")
 
 class JobMatchResult(BaseModel):
     """

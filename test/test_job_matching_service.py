@@ -41,19 +41,13 @@ def test_full_job_matching_flow():
         )
         
         # 4. 準備測試資料 (以陳浩宇為例)
-        TEST_USER_ID = 2        # 根據你提供的資料庫現況，使用 user_id = 2
-        TEST_DOCUMENT_ID = 2    # 對應 RESUME 表中的 resume_id = 2
+        TEST_USER_ID = 1        # 根據你提供的資料庫現況，使用 user_id = 2
+        TEST_DOCUMENT_ID = 1    # 對應 RESUME 表中的 resume_id = 2
         TEST_SOURCE_TYPE = "RESUME"  # 明確指定去「原始履歷」資料庫找
         filters = {
             "city": ["台北市", "新北市"], 
             "salary_min": 40000,
             "salary_max": 60000
-        }
-        
-        # 模擬使用者的六維能力分數 (D1-D6)
-        user_6d_profile = {
-            "D1": 2.5, "D2": 4.5, "D3": 3.0, 
-            "D4": 2.0, "D5": 3.5, "D6": 4.0
         }
         
         print(f"🔍 正在為 User {TEST_USER_ID} 執行漏斗式職缺篩選...")
@@ -65,8 +59,7 @@ def test_full_job_matching_flow():
             user_id=TEST_USER_ID, 
             document_id=TEST_DOCUMENT_ID,
             source_type=TEST_SOURCE_TYPE,
-            filters=filters, 
-            user_6d_profile=user_6d_profile
+            filters=filters
         )
         
         # 6. 驗證結果
