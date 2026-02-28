@@ -12,25 +12,28 @@ def test_course_recommendation():
     # 1. 初始化服務
     service = CourseRecommendationService()
     
-    # 2. 測試獲取推薦 (假設使用一個測試 ID，若無則會使用默認值)
-    # 你可以嘗試把 '1' 換成資料庫中真實存在的 user_id
+    # 2. 測試獲取推薦
     test_user_id = "1" 
     
     print(f"測試使用者 ID: {test_user_id}")
     
     try:
-        result = service.get_recommendations(test_user_id, top_k=3)
+        # 由於新架構直接回傳 List[Dict]，不再有外層的 response wrapping
+        recommendations = service.get_recommendations(test_user_id, top_k=3)
         
         print("✅ 推薦結果獲取成功！")
-        print(f"使用者等級: {result['user_level']} (匹配分數: {result['match_score']})")
-        print(f"獲取推薦課程數量: {len(result['recommendations'])}")
+        print(f"獲取推薦課程數量: {len(recommendations)}")
+        print("==========================================================")
         
-        for i, course in enumerate(result['recommendations'], 1):
-            print(f"[{i}] {course['course_name']}")
-            print(f"    - 難度: {course['level']}")
-            print(f"    - 優先分數 (Priority): {course['priority_score']:.4f}")
-            print(f"    - 品質分數 (Quality): {course['quality_score']:.2f}")
-            print(f"    - 連結: {course['url']}")
+        for i, course in enumerate(recommendations, 1):
+            print(f"[{i}] 課程名稱: {course.get('course_name')}")
+            print(f"    - ID: {course.get('course_id')} | 語言難度: {course.get('level')} | 等級值: {course.get('course_level')}")
+            print(f"    - 時長: {course.get('duration_suggested')} | 類型: {course.get('course_type')}")
+            print(f"    - 評分 (Rating): {course.get('rating')} | 評論數: {course.get('review_count')}")
+            print(f"    - 優先分數 (Priority): {course.get('priority_score', 0):.4f}")
+            print(f"    - 品質分數 (Quality): {course.get('quality_score', 0):.4f}")
+            print(f"    - 連結: {course.get('url')}")
+            print("----------------------------------------------------------")
 
     except Exception as e:
         print(f"❌ 測試過程中發生錯誤: {e}")
