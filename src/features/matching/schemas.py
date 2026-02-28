@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional, Dict, Any
+from typing import Literal, List, Optional, Dict, Any
+
 
 class User6DProfile(BaseModel):
     """
@@ -29,6 +30,9 @@ class JobMatchRequest(BaseModel):
     API 負責人應依照此格式傳入 JSON
     """
     user_id: int = Field(..., description="使用者資料庫 ID")
+    document_id: int = Field(..., description="履歷 ID 或 優化履歷 ID")
+    source_type: Literal["RESUME", "OPTIMIZATION"] = Field(..., description="履歷來源：原始或優化")
+
     filters: Optional[JobMatchFilters] = Field(default_factory=JobMatchFilters)
     user_6d_profile: User6DProfile = Field(..., description="使用者的六維職能分數")
 

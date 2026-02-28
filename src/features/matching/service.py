@@ -7,6 +7,7 @@ from typing import List, Dict, Any
 from src.features.matching.qdrant_retriever import JobMatchRetriever, UserProfileRetriever
 from src.features.matching.matcher import JobMatcher
 from src.features.matching.advisor import CareerLLMAdvisor
+from src.features.matching.schemas import JobMatchRequest, JobMatchingResponse
 
 class CareerMatchingService:
     """
@@ -17,14 +18,17 @@ class CareerMatchingService:
         self.qdrant_client = qdrant_client
         self.supabase_client = supabase_client
 
-        # 初始化檢索器
-        self.resume_retriever = UserProfileRetriever(qdrant_client, "resume_vectors")
+        # 修改點 1：初始化檢索器
+        # 移除原本寫死的 "resume_vectors"，因為現在 UserProfileRetriever 會根據 source_type 自己決定
+        self.resume_retriever = UserProfileRetriever(qdrant_client)
         self.job_retriever = JobMatchRetriever(qdrant_client, "job_vectors")
         
         # 初始化 AI 顧問
         self.llm_advisor = CareerLLMAdvisor(api_key=openai_api_key)
 
-    def find_best_jobs(self, user_id: int, filters: dict, user_6d_profile: dict) -> List[dict]:
+    # 修改點 2：函數入口新增 document_id 與 source_type 參數
+    # (註：如果前端是傳 Pydantic DTO 物件進來，這裡可以直接改成接收 request: JobMatchRequest)
+    def find_best_jobs(self, user_id: int, document_id: int, source_type: str, filters: dict, user_6d_profile: dict) -> List[dict]:
         """
         執行完整的三階段匹配流程。
         """
@@ -32,8 +36,13 @@ class CareerMatchingService:
             # ==========================================
             # Phase 1: Qdrant 混合召回 (撈取 Top 50 候選名單)
             # ==========================================
-            print(f"正在提取 User {user_id} 的履歷向量...")
-            resume_vector = self.resume_retriever.get_resume_vector(user_id)
+            print(f"正在提取 User {user_id} 的 {source_type} 履歷向量 (文件ID: {document_id})...")
+            # 修改點 3：將路由參數傳遞給 Retriever
+            resume_vector = self.resume_retriever.get_user_resume_vector(
+                user_id=user_id,
+                document_id=document_id,
+                source_type=source_type
+            )
 
             print("正在進行第一階段：Qdrant 語意與硬條件檢索...")
             primary_candidates = self.job_retriever.search_hybrid_jobs(

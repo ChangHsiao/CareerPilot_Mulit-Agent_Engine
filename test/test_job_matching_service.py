@@ -41,7 +41,9 @@ def test_full_job_matching_flow():
         )
         
         # 4. 準備測試資料 (以陳浩宇為例)
-        TEST_USER_ID = 1
+        TEST_USER_ID = 2        # 根據你提供的資料庫現況，使用 user_id = 2
+        TEST_DOCUMENT_ID = 2    # 對應 RESUME 表中的 resume_id = 2
+        TEST_SOURCE_TYPE = "RESUME"  # 明確指定去「原始履歷」資料庫找
         filters = {
             "city": ["台北市", "新北市"], 
             "salary_min": 40000,
@@ -55,11 +57,14 @@ def test_full_job_matching_flow():
         }
         
         print(f"🔍 正在為 User {TEST_USER_ID} 執行漏斗式職缺篩選...")
+        print(f"📄 目標文件: {TEST_SOURCE_TYPE} (ID: {TEST_DOCUMENT_ID})")
         print(f"篩選條件: {filters}")
         
         # 5. 執行核心匹配流程
         results = service.find_best_jobs(
             user_id=TEST_USER_ID, 
+            document_id=TEST_DOCUMENT_ID,
+            source_type=TEST_SOURCE_TYPE,
             filters=filters, 
             user_6d_profile=user_6d_profile
         )
