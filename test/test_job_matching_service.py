@@ -55,12 +55,33 @@ def test_full_job_matching_flow():
         print(f"篩選條件: {filters}")
         
         # 5. 執行核心匹配流程
+        print("\n⏳ 開始呼叫 service.find_best_jobs()...")
         results = service.find_best_jobs(
             user_id=TEST_USER_ID, 
             document_id=TEST_DOCUMENT_ID,
             source_type=TEST_SOURCE_TYPE,
             filters=filters
         )
+        
+        # --- 新增：為了在測試檔直接印出檢視，這裡手動去撈一次同樣的資料來顯示 ---
+        print("\n📊 [測試專用] 正在從資料庫獨立提取六維分數以供人工檢視...")
+        report_response = (
+            supabase_client.table('career_analysis_report')
+            .select('radar_chart, report_version')
+            .eq('user_id', TEST_USER_ID)
+            .execute()
+        )
+        if report_response.data:
+            latest_report = max(
+                report_response.data, 
+                key=lambda x: float(x.get('report_version') or '0.0')
+            )
+            radar_chart = latest_report.get('radar_chart', {})
+            print(f"✅ User {TEST_USER_ID} 的原始雷達圖資料 (radar_chart):")
+            print(json.dumps(radar_chart, indent=2, ensure_ascii=False))
+        else:
+            print("⚠️ 找不到該 User 的六維雷達圖資料！")
+        # -------------------------------------------------------------
         
         # 6. 驗證結果
         print("\n🏆 ================= 終極排行榜 Top 10 ================= 🏆\n")

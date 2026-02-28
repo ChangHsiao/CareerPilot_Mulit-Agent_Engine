@@ -81,10 +81,11 @@ def test_experienced_analysis():
     user_input = {
         "survey_json": json.dumps(INPUT_CAREER_DATA),
         "trait_json": json.dumps(INPUT_TRAIT_DATA),
-        "resume_json": json.dumps(RESUME_DATA)
+        "resume_json": json.dumps(RESUME_DATA),
+        "user_id": "user_123"
     }
 
-    result = manager.run_task("career_analysis_experienced", "user_123", user_input)
+    result = manager.run_task("career_analysis_experienced", user_input)
     print("\n🎉 Analysis Result:")
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
@@ -152,13 +153,14 @@ def test_analysis_with_db_resume():
 
     # 注意：這裡「不提供」resume_json，強迫 Agent 去撈資料庫裡的 user_id=1 履歷
     user_input = {
+        "user_id": user_id,
         "survey_json": INPUT_CAREER_DATA,
         "trait_json": INPUT_TRAIT_DATA
     }
 
     # 2. 執行任務
     print(f"🚀 啟動任務... Agent 將自主撈取 User {user_id} 的履歷內容並進行分析。")
-    result = manager.run_task("career_analysis_experienced", user_id, user_input)
+    result = manager.run_task("career_analysis_experienced", user_input)
     
     print("\n🎉 分析完成！")
 
@@ -190,11 +192,12 @@ def test_resume_analysis():
     manager = CareerAgentManager(model_name="o3-mini")
 
     user_input = {
+        "user_id": "user_123",
         "resume_content": "我是一個有五年經驗的工程師，我會寫程式，也喜歡學習新技術。",
         "target_role": "資深後端工程師"
     }
 
-    result = manager.run_task("resume_analysis", "user_123", user_input)
+    result = manager.run_task("resume_analysis", user_input)
     print("\n🎉 Analysis Result:")
     print(json.dumps(result, indent=2, ensure_ascii=False))
 

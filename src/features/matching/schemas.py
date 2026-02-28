@@ -2,21 +2,21 @@ from pydantic import BaseModel, Field
 from typing import Literal, List, Optional, Dict, Any
 
 
-class User6DProfile(BaseModel):
-    """
-    使用者六維職能評分 (1.0 - 5.0)
-    對應 PDF 規格書中的 D1~D6 維度
-    """
-    d1_frontend: float = Field(..., ge=0, le=5, description="D1: 前端開發能力")
-    d2_backend: float = Field(..., ge=0, le=5, description="D2: 後端開發能力")
-    d3_devops: float = Field(..., ge=0, le=5, description="D3: 雲端維運能力")
-    d4_ai_data: float = Field(..., ge=0, le=5, description="D4: AI與數據能力")
-    d5_quality: float = Field(..., ge=0, le=5, description="D5: 品質與架構能力")
-    d6_soft_skills: float = Field(..., ge=0, le=5, description="D6: 軟實力/溝通能力")
+# class User6DProfile(BaseModel):
+#     """
+#     使用者六維職能評分 (1.0 - 5.0)
+#     對應 PDF 規格書中的 D1~D6 維度
+#     """
+#     d1_frontend: float = Field(..., ge=0, le=5, description="D1: 前端開發能力")
+#     d2_backend: float = Field(..., ge=0, le=5, description="D2: 後端開發能力")
+#     d3_devops: float = Field(..., ge=0, le=5, description="D3: 雲端維運能力")
+#     d4_ai_data: float = Field(..., ge=0, le=5, description="D4: AI與數據能力")
+#     d5_quality: float = Field(..., ge=0, le=5, description="D5: 品質與架構能力")
+#     d6_soft_skills: float = Field(..., ge=0, le=5, description="D6: 軟實力/溝通能力")
 
-    class Config:
-        # 允許使用 D1, D2 這種別名，增加相容性
-        populate_by_name = True
+#     class Config:
+#         # 允許使用 D1, D2 這種別名，增加相容性
+#         populate_by_name = True
 
 class JobMatchFilters(BaseModel):
     """職缺搜尋過濾條件"""

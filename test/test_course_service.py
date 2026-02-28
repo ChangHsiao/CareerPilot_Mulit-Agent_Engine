@@ -12,7 +12,7 @@ def test_course_recommendation():
     # 1. 初始化服務
     service = CourseRecommendationService()
     
-    # 2. 測試獲取推薦
+    # 2. 測試用 user_id
     test_user_id = "1" 
     
     print(f"測試使用者 ID: {test_user_id}")
