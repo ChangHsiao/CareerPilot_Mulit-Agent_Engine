@@ -49,9 +49,8 @@ class CourseRecommendationService:
             if not resp.data:
                 return None
             
-            data = resp.data[0]
-            raw_role = data.get("role", "")
-            raw_score = data.get("match_score", "")
+            raw_role = resp.data["target_position"]["role"]
+            raw_score = resp.data["target_position"]["match_score"]
             
             # 清理資料：移除 AI 產生的前綴與百分比符號
             # 1. 處理 Role (提取關鍵字)
