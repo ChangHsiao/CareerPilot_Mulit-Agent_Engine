@@ -42,9 +42,16 @@ def test_full_job_matching_flow():
         )
         
         # 4. 準備測試資料 (以陳浩宇為例)
-        TEST_USER_ID = 1        # 根據你提供的資料庫現況，使用 user_id = 2
+        TEST_USER_ID = 1        # 根據你提供的資料庫現況，使用 user_id = 1
+
+        # 原始履歷
         TEST_DOCUMENT_ID = 1    # 對應 RESUME 表中的 resume_id = 2
         TEST_SOURCE_TYPE = "RESUME"  # 明確指定去「原始履歷」資料庫找
+
+        # 優化履歷
+        # TEST_DOCUMENT_ID = 6    # 對應 OPTIMIZATION 表中的 optimization_id = 6
+        # TEST_SOURCE_TYPE = "OPTIMIZATION"
+        
         filters = {
             "city": ["台北市", "新北市"], 
             "salary_min": 40000,
@@ -87,19 +94,21 @@ def test_full_job_matching_flow():
         # 6. 驗證結果
         print("\n🏆 ================= 終極排行榜 Top 10 ================= 🏆\n")
         if results:
-            # print(f"✅ 成功產出 {len(results)} 筆職缺推薦：\n")
-            print(results)
+            print(f"✅ 成功產出 {len(results)} 筆職缺推薦：\n")
+            # print(results) # 原始結構檢視
             
-            # for i, job in enumerate(results, 1):
-            #     print(f"[{i}] {job.get('job_title')} @ {job.get('company_name')}")
-            #     print(f"    最終契合度: {job.get('final_score')}")
-            #     print(f"    推薦理由: {job.get('recommendation_reason')}")
-            #     print(f"    優勢: {job.get('strengths')}")
-            #     print(f"    劣勢: {job.get('weaknesses')}")
-            #     print(f"    面試建議: {job.get('interview_tips')}")
-            #     print("-" * 50)
+            for i, job in enumerate(results, 1):
+                print(f"[{i}] {job.get('job_title')} @ {job.get('company_name')}")
+                print(f"    職缺ID: {job.get('job_id')}")
+                print(f"    最終契合度: {job.get('final_score')}")
+                print(f"    推薦理由: {job.get('recommendation_reason')}")
+                print(f"    優勢: {job.get('strengths')}")
+                print(f"    劣勢: {job.get('weaknesses')}")
+                print(f"    面試建議: {job.get('interview_tips')}")
+                print("-" * 50)
             
-            # print("檢查第一筆輸出結構")
+            print("檢查第一筆輸出結構")
+
             # 驗證關鍵欄位是否存在 (以第一名為例)
             top_job = results[0]
             # pprint.pprint(top_job)

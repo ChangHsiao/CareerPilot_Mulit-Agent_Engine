@@ -20,19 +20,19 @@ def fix_indices():
     try:
         # 1. 取得 Qdrant 連線
         client = get_qdrant_client()
-        print("連線到 Qdrant 成功。正在為 'resume_vectors' 集合建立索引...")
+        print("連線到 Qdrant 成功。正在為 'optimized_resume_vectors' 集合建立索引...")
         
-        # 2. 為 resume_id 建立整數型別 (INTEGER) 的索引 (這就是報錯缺少的那個)
+        # 2. 為 optimization_id 建立整數型別 (INTEGER) 的索引 (這就是報錯缺少的那個)
         client.create_payload_index(
-            collection_name="resume_vectors",
-            field_name="resume_id",
+            collection_name="optimized_resume_vectors",
+            field_name="optimization_id",
             field_schema=models.PayloadSchemaType.INTEGER,
         )
-        print("🎉 成功建立 'resume_id' 索引！")
+        print("🎉 成功建立 'optimization_id' 索引！")
 
         # 3. 順便為 user_id 也建立索引 (作為雙重防護)
         client.create_payload_index(
-            collection_name="resume_vectors",
+            collection_name="optimized_resume_vectors",
             field_name="user_id",
             field_schema=models.PayloadSchemaType.INTEGER,
         )
