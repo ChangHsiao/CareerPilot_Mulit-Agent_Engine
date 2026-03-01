@@ -19,12 +19,12 @@ class CareerAgentManager:
     負責根據 TaskType 組裝對應的 Agent 與 Task，並執行 CrewAI 流程。
     """
     
-    def __init__(self, model_name: str = "gpt-4o", temp: float = 0.7):
-        # 初始化共用的 LLM 設定 (使用 OpenAI o3-mini 模型)
+    def __init__(self, model_name: str = "gpt-4o", temp: float = 0.5):
         self.llm = LLM(model=model_name, temperature=temp)
+        # qa agent 使用低溫度的 LLM
         self.qa_llm = LLM(model=model_name, temperature=0.1) 
         
-        # 初始化 Supabase Client 與結果處理註冊器
+        # 初始化 Supabase Client 與結果處理註冊器(資料庫儲存)
         self.supabase = get_supabase_client()
         self.handler_registry = HandlerRegistry(self.supabase)
 
@@ -39,7 +39,7 @@ class CareerAgentManager:
             
         print(f"🚀 Manager 收到請求: {task_type_str} | User ID: {user_id}")
 
-        # 1. 處理自動分流邏輯 (Auto-Dispatch)
+        # 1. 自動分流邏輯 (Auto-Dispatch) - analysis 有無經驗
         if task_type_str == "career_analysis":
             try:
                 survey_data = json.loads(user_input.get("survey_json", "{}"))

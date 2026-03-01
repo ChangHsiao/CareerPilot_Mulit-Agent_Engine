@@ -189,7 +189,7 @@ class JobMatcher:
         final_score = (0.7 * (1 - norm_dist)) + (0.3 * similarity)
         return f"{int(final_score * 100)}%"
 
-    # 👇 請在這裡新增這個方法，專門給 Qdrant 職缺匹配使用！
+    # 請在這裡新增這個方法，專門給 Qdrant 職缺匹配使用！
     @staticmethod
     def calculate_dynamic_job_gap(user_6d: dict, job_payload: dict) -> float:
         """
