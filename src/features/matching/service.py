@@ -211,7 +211,10 @@ class CareerMatchingService:
                         "full_address": str(details.get('full_address', '')),
                         "source_url": str(details.get('source_url', '')),
                         "final_score": f_final_pct,
-                        "ai_analysis": ai_insights
+                        "recommendation_reason": ai_insights.get("recommendation_reason", ""),
+                        "strengths": ai_insights.get("strengths", ""),
+                        "weaknesses": ai_insights.get("weaknesses", ""),
+                        "interview_tips": ai_insights.get("interview_tips", "")
                     }
                 except Exception as e:
                     print(f"⚠️ 單筆職缺分析失敗: {e}")

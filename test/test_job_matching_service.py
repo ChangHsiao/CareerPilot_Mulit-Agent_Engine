@@ -2,6 +2,7 @@
 import os
 import json
 import sys
+import pprint
 
 # 確保可以匯入 src 資料夾
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -86,18 +87,23 @@ def test_full_job_matching_flow():
         # 6. 驗證結果
         print("\n🏆 ================= 終極排行榜 Top 10 ================= 🏆\n")
         if results:
-            print(f"✅ 成功產出 {len(results)} 筆職缺推薦：\n")
+            # print(f"✅ 成功產出 {len(results)} 筆職缺推薦：\n")
+            print(results)
             
-            for i, job in enumerate(results, 1):
-                print(f"[{i}] {job.get('job_title')} @ {job.get('company_name')}")
-                print(f"    最終契合度: {job.get('final_score')}")
-                print(f"    AI 分析內容:")
-                print(json.dumps(job.get('ai_analysis'), indent=8, ensure_ascii=False))
-                print("-" * 50)
+            # for i, job in enumerate(results, 1):
+            #     print(f"[{i}] {job.get('job_title')} @ {job.get('company_name')}")
+            #     print(f"    最終契合度: {job.get('final_score')}")
+            #     print(f"    推薦理由: {job.get('recommendation_reason')}")
+            #     print(f"    優勢: {job.get('strengths')}")
+            #     print(f"    劣勢: {job.get('weaknesses')}")
+            #     print(f"    面試建議: {job.get('interview_tips')}")
+            #     print("-" * 50)
             
+            # print("檢查第一筆輸出結構")
             # 驗證關鍵欄位是否存在 (以第一名為例)
             top_job = results[0]
-            required_keys = ["job_id", "job_title", "requirements", "final_score", "ai_analysis"]
+            # pprint.pprint(top_job)
+            required_keys = ["job_id", "job_title", "requirements", "final_score", "recommendation_reason", "strengths", "weaknesses", "interview_tips"]
             missing_keys = [k for k in required_keys if k not in top_job]
             if not missing_keys:
                 print("\n✅ JSON 結構完整性驗證通過。")

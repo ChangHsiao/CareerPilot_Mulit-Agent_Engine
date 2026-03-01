@@ -47,9 +47,15 @@ class JobMatchResult(BaseModel):
     full_address: str = Field(..., description="完整地址")
     requirements: str = Field(..., description="職缺要求 (清理後的字串)")
     final_score: str = Field(..., description="最終匹配百分比 (例如: '92.5%')")
-    ai_analysis: Optional[Dict[str, Any]] = Field(None, description="AI 洞察分析報告 (JSON 格式)")
+    recommendation_reason: Optional[str] = Field(None, description="AI 推薦理由說明")
+    strengths: Optional[str] = Field(None, description="AI 候選人優勢")
+    weaknesses: Optional[str] = Field(None, description="AI 缺乏部分")
+    interview_tips: Optional[str] = Field(None, description="AI 面試準備建議")
     source_url: Optional[str] = Field(None, description="原始職缺連結")
 
+#======
+# 這兩個 key (status 與 results) 在 API 設計中被稱為 「回應包裝 (Response Envelope / Wrapper)」。通常如果 API 要回傳一個陣列 (例如 Top 10 的職缺列表)，開發者會習慣把它包在一個帶有 status 的物件裡面，這個結構原本被定義在 schemas.py的 JobMatchingResponse 類別中。
+#======
 class JobMatchingResponse(BaseModel):
     """
     職缺匹配完整回應格式
