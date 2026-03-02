@@ -44,8 +44,8 @@ class RadarChart(BaseModel):
 # ==========================================
 class CurrentStatus(BaseModel):
     self_assessment: str = Field(description= f"使用者問卷自評的職涯階段。必須嚴格從此清單完全複製：{STANDARD_CAREER_STAGES}，不可簡寫")
-    actual_level: str = Field(description= f"系統根據 D1-D6 分數評估的實際職級 必須嚴格從此清單完全複製：{STANDARD_CAREER_STAGES}，不可簡寫")
-    cognitive_bias: str = Field(description="針對『硬實力』的認知落差分析與補強建議。請具體對比使用者的『自評職級』與『實際 D1-D6 技術分數』。指出落差在哪裡(例如：自評 Senior 但缺乏雲端維運經驗)，並提供具體該學什麼框架或工具的補強建議。字數約 100 字。")
+    actual_level: str = Field(description= f"系統根據 D1-D6 分數評估的實際職級，必須嚴格從此清單完全複製：{STANDARD_CAREER_STAGES}，不可簡寫")
+    cognitive_bias: str = Field(description="針對『硬實力』的認知落差分析與補強建議。請具體對比使用者的『自評職級』與『實際 D1-D6 技術分數』。指出落差在哪裡(例如：自評 Senior 但缺乏雲端維運經驗)，並提供具體該學什麼框架或工具的補強建議。")
 
 class TargetPosition(BaseModel):
     role: str = Field(description=f"""
@@ -61,9 +61,12 @@ class TargetPosition(BaseModel):
     """)
     match_score: str = Field(description="目標職位與目前能力的匹配百分比 (如 '75%')")
     gap_description: str = Field(description="""
-        針對目標職位的落差分析。
-        - 有經驗者：具體說明技術缺口 (如缺 K8s)。
-        - 無經驗者：**必須在此處整合『技能轉譯』**。解釋使用者的舊經驗 (如 Excel) 如何對應到新職位 (如 SQL)，並說明雖然目前技術分低 (0.5)，但具備哪些遷移潛力。
+        針對目標職位的深度落差分析，請務必使用以下結構輸出：
+        【優勢 (Strengths)】：既有技術/軟實力中能直接對應目標職位的能力。
+        【劣勢 (Weaknesses)】：技術斷層或相關經驗不足之處。
+        【機會 (Opportunities)】：目標職位目前的市場缺口可以如何發揮使用者潛力。
+        【威脅 (Threats)】：該職位的競爭情況或技術快速迭代帶來的外部風險。
+        【核心落差 (Gap)】：具體指出缺漏的技術棧（如缺乏 K8s、高併發經驗）或需轉譯的舊經驗。
         """)
 
 class GapAnalysis(BaseModel):
@@ -76,12 +79,12 @@ class GapAnalysis(BaseModel):
 # ==========================================
 
 class ActionPlan(BaseModel):
-    short_term: str = Field(description="短期計畫 (1-3個月)：針對最急迫的 Gap，提及具體工具或語法")
-    mid_term: str = Field(description="中期計畫 (3-6個月)：針對專案經驗與進階框架的補強") # [新增]
-    long_term: str = Field(description="長期計畫 (6個月以上)：針對架構思維、軟實力或跨領域整合")
+    short_term: str = Field(description="短期計畫 (1-3個月)：針對最急迫的破口。必須包含具體的學習主題、推薦工具(如指定閱讀某技術文件或學習某特定語言)與預期達成的專案里程碑。")
+    mid_term: str = Field(description="中期計畫 (3-6個月)：針對專案經驗與進階框架的補強。指出該如何累積作品集或工作上的實作方向。")
+    long_term: str = Field(description="長期計畫 (6個月以上)：針對架構思維、產業領域知識 (Domain Knowledge) 或跨領域整合的長遠職涯發展建議。")
 
 class PreliminarySummary(BaseModel):
-    core_insight: str = Field(description="一句話精闢總結使用者的職涯畫像，包含強項與隱憂")
+    core_insight: str = Field(description="高階職涯顧問的深度洞察（約150-200字）。請採用結構化敘述：1. 【產業洞察】：簡單描繪目標職位的市場趨勢與技術演進。2. 【個人總結】：精闢點出使用者的核心潛力與潛在隱憂。")
 
 # 最終輸出的完整報告結構
 class CareerReport(BaseModel):

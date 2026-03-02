@@ -42,7 +42,11 @@ class CareerAgentManager:
         # 1. 自動分流邏輯 (Auto-Dispatch) - analysis 有無經驗
         if task_type_str == "career_analysis":
             try:
-                survey_data = json.loads(user_input.get("survey_json", "{}"))
+                survey_data_raw = json.loads(user_input.get("survey_json", "{}"))
+                
+                # 若包含 questionnaire_response (例如直接從 DB 撈的回傳格式)，則從裡面取
+                survey_data = survey_data_raw.get("questionnaire_response", survey_data_raw)
+                
                 # 檢查 module_a 技術填寫紀錄 (q1_languages 是否有值且非空)
                 has_experience = (
                     survey_data.get("module_a", {}).get("q1_languages") is not None and 
