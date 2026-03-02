@@ -10,9 +10,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 from src.core.database.supabase_client import get_supabase_client
 from src.core.agent_engine.manager import CareerAgentManager
 
-def test_analysis_module():
+def test_analysis_module(save_to_db: bool = False):
     print("==================================================")
-    print("🚀 啟動 Analysis 模組優化測試 (不寫入資料庫)")
+    print(f"🚀 啟動 Analysis 模組優化測試 ({'寫入資料庫' if save_to_db else '不寫入資料庫'})")
     print("==================================================")
     
     load_dotenv()
@@ -89,13 +89,19 @@ def test_analysis_module():
     print("\n⏳ 初始化 CareerAgentManager...")
     manager = CareerAgentManager()
     
-    print("\n🛡️ 已屏蔽存檔機制，測試結果將【不會】寫入資料庫。")
+    if save_to_db:
+        print("\n⚠️ 注意：測試結果將寫入資料庫！")
+    else:
+        print("\n🛡️ 已屏蔽存檔機制，測試結果將【不會】寫入資料庫。")
     print(f"🧠 開始執行 analysis 分析任務 (這可能需要幾分鐘)...\n")
     
     try:
-        # Patch handler_registry 的 get_handler 方法，使其回傳 None，從而跳過 handler.process(資料庫寫入)
-        with patch.object(manager.handler_registry, 'get_handler', return_value=None):
+        if save_to_db:
             result = manager.run_task("career_analysis", user_input)
+        else:
+            # Patch handler_registry 的 get_handler 方法，使其回傳 None，從而跳過 handler.process(資料庫寫入)
+            with patch.object(manager.handler_registry, 'get_handler', return_value=None):
+                result = manager.run_task("career_analysis", user_input)
             
         print("\n🏆 ================= 分析結果 (Raw JSON) ================= 🏆\n")
         
@@ -132,4 +138,7 @@ def test_analysis_module():
         traceback.print_exc()
 
 if __name__ == "__main__":
-    test_analysis_module()
+    # 若要寫入資料庫，可以使用 python test_analysis.py --save 執行
+    # 或者直接修改下方為 test_analysis_module(save_to_db=True)
+    save_to_db = "--save" in sys.argv
+    test_analysis_module(save_to_db=save_to_db)
