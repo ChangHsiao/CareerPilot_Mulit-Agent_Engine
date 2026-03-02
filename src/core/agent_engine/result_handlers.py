@@ -79,7 +79,7 @@ class GapAnalysisHandler(BaseResultHandler):
             raise
 
 # ======================================================
-# 範例 1：履歷優化處理器 (Resume Optimization) - 新增式存檔(需要撈 resume_id & 算版本)
+# 1. 履歷優化處理器 (Resume Optimization) - 新增式存檔(需要撈 resume_id & 算版本)
 # ======================================================
 class ResumeOptHandler(BaseResultHandler):
     def process(self, pydantic_result: any, **kwargs):
@@ -122,7 +122,7 @@ class ResumeOptHandler(BaseResultHandler):
         return self.supabase.table("resume_optimization").insert(payload).execute()
 
 # ======================================================
-# 範例 2：履歷分析處理器 (Resume Analysis) - 新增式存檔
+# 2. 履歷分析處理器 (Resume Analysis) - 新增式存檔
 # ======================================================
 class ResumeAnalysisHandler(BaseResultHandler):
     def process(self, pydantic_result: any, **kwargs):
