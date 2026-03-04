@@ -89,6 +89,108 @@ def test_experienced_analysis():
     print("\n🎉 Analysis Result:")
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
+def test_entry_level_analysis():
+    print("\n\n====== TEST CASE: ENTRY LEVEL ANALYSIS (No DB Save) ======")
+    manager = CareerAgentManager()
+
+    # 1. 定義無經驗者的虛擬問卷資料 (Module A & B 前半部皆為 0 或空值)
+    INPUT_CAREER_DATA = {
+        "module_a": {
+            # Q1~Q8 未填寫，由前端帶入 0 或空值
+            "q1_languages": "", 
+            "q2_frontend": 0,
+            "q3_backend": 0,
+            "q4_database": "",
+            "q5_devops": 0,
+            "q6_ai_data": 0,
+            "q7_security": 0,
+            "q8_domain": ""
+        },
+        "module_b": {
+            # Q9~Q14 未填寫，由前端帶入 0 或空值
+            "q9_troubleshoot": 0,
+            "q10_tech_choice": 0,
+            "q11_communication": 0,
+            "q12_code_review": 0,
+            "q13_learning": 0,
+            "q14_process": 0,
+            
+            # 只有 Q15_english 因為非技術職位也可能填寫，我們給個正常值
+            "q15_english": "fluent_reading"
+        },
+        "module_c": {
+            "q16_current_level": "entry_level",
+            "q17_target_role": "frontend",
+            "q18_industry": "agency",
+            "q19_search_status": "urgent_active"
+        },
+        "module_d": {
+            "q20_values_top3": ["work_life_balance", "social_support", "good_management"],
+            "q21_pressure": "avoid_if_possible",
+            "q22_career_type": "generalist",
+            "q23_learning_style": ["video_tutorials", "mentorship"]
+        }
+    }
+
+    # 2. 定義人格特質問卷結果 (隨意一組假資料)
+    INPUT_TRAIT_DATA = {
+        "user_id": "test_entry_001",
+        "trait_raw_responses": {"Q1": "A", "Q2": "B", "Q3": "A", "Q4": "A", "Q5": "B", "Q6": "A", "Q7": "C", "Q8": "B", "Q9": "B", "Q10": "A"},
+        "trait_calculation_debug": {"structure_raw": 5, "ambiguity_raw": 8, "decision_raw": 6, "learning_raw": 7, "transfer_raw": 4},
+        "trait_normalized_scores": {
+            "structure": 50,
+            "ambiguity": 80,
+            "decision": 60,
+            "learning": 70,
+            "transfer": 40
+        },
+        "primary_archetype": "ADAPTIVE_PIONEER",
+        "secondary_archetypes": ["AGILE_LEARNER"],
+        "trait_created_at": "2026-03-04T12:00:00Z"
+    }
+
+    # 3. 定義一組完全沒有軟體相關經驗的履歷
+    RESUME_DATA = {
+        "basics": {
+            "name": "王小明",
+            "summary": "之前在餐飲業擔任店長 3 年，擅長與人溝通及處理突發狀況，對程式開發產生濃厚興趣，目前正在自學 Python 與網頁前端技術，希望能成功轉職為軟體工程師。"
+        },
+        "skills": {
+            "languages": ["自學 Python (初學)", "自學 HTML/CSS (初學)"],
+            "frameworks": [],
+            "infrastructure": []
+        },
+        "work": [
+            {
+                "company": "美味早午餐",
+                "position": "店長",
+                "highlights": [
+                    "負責店鋪日常營運，帶領 5 人團隊",
+                    "處理客訴與突發狀況，提升顧客滿意度 15%",
+                    "優化排班與備料流程，降低 10% 食材浪費"
+                ]
+            }
+        ]
+    }
+
+    user_input = {
+        "survey_json": json.dumps(INPUT_CAREER_DATA),
+        "trait_json": json.dumps(INPUT_TRAIT_DATA),
+        "resume_json": json.dumps(RESUME_DATA),
+        "user_id": "test_entry_001"
+    }
+
+    # 注意：我們傳入 "career_analysis" 讓 manager.py 啟動自動分流機制
+    # 預期它會因為 q1_languages 分數皆為0/null，而自動切換為 career_analysis_entry_level
+    print(f"🚀 啟動任務... 將測試無經驗者分流機制。")
+    
+    # 為了避免存入資料庫，我們暫時攔截或不使用包含存庫邏輯的 user_id
+    # 若 Manager.py 中有 DB 儲存，我們就不提供真實存在的 supabase uuid，此測試會在儲存時 try-except 報錯但仍會回傳結果。
+    result = manager.run_task("career_analysis", user_input)
+    
+    print("\n🎉 Analysis Result (顯示於終端機):")
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+
 def test_analysis_with_db_resume():
     """
     實測：Agent 從 DB 撈取履歷 + 配合虛擬問卷資料 + 自動儲存報告。
@@ -203,6 +305,11 @@ def test_resume_analysis():
 
 if __name__ == "__main__":
     # 這裡可以選擇要跑哪個測試
-    test_analysis_with_db_resume()
+    
+    # 新增的無經驗者邏輯測試
+    test_entry_level_analysis()
+    
+    # 以下為原有測試，先註解掉以專注測試新分支
+    # test_analysis_with_db_resume()
     # test_experienced_analysis()
     # test_resume_critique()
