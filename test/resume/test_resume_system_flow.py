@@ -33,7 +33,7 @@ def test_resume_system_integration():
     # 前端傳入的 user_input
     task_type_str = "resume_analysis"
     user_input = {
-        "user_id": 14
+        "user_id": 5
     }
     
     # ---------------------------------------------------------
@@ -67,7 +67,7 @@ def test_resume_system_integration():
     # 優化任務輸入
     task_type_str="resume_opt"
     opt_input = {
-        "user_id": 14
+        "user_id": 5
     }
     
     print(f"[任務 2] 啟動『履歷內容優化』...")
