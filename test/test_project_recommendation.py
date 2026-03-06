@@ -10,7 +10,7 @@ def test_project_recommendation_flow():
     manager = CareerAgentManager()
     
     # 改變：只需傳入 user_id，移除 hardcoded 的 skill_gap_result
-    user_id = "1"
+    user_id = "3"
     user_input = {
         "user_id": user_id
     }
@@ -22,8 +22,7 @@ def test_project_recommendation_flow():
         with patch('src.core.agent_engine.result_handlers.ProjectRecHandler.process') as mock_process:
             final_result = manager.run_task(
                 task_type_str="project_rec",
-                user_id=user_id,
-                user_input=user_input,
+                user_input=user_input
             )
             print("\n[攔截資料庫寫入] 測試中已阻止寫入 DB")
         

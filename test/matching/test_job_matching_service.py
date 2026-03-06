@@ -95,17 +95,17 @@ def test_full_job_matching_flow():
         print("\n🏆 ================= 終極排行榜 Top 10 ================= 🏆\n")
         if results:
             print(f"✅ 成功產出 {len(results)} 筆職缺推薦：\n")
-            # print(results) # 原始結構檢視
+            print(json.dumps(results, indent=2, ensure_ascii=False)) # 原始結構檢視
             
-            for i, job in enumerate(results, 1):
-                print(f"[{i}] {job.get('job_title')} @ {job.get('company_name')}")
-                print(f"    職缺ID: {job.get('job_id')}")
-                print(f"    最終契合度: {job.get('final_score')}")
-                print(f"    推薦理由: {job.get('recommendation_reason')}")
-                print(f"    優勢: {job.get('strengths')}")
-                print(f"    劣勢: {job.get('weaknesses')}")
-                print(f"    面試建議: {job.get('interview_tips')}")
-                print("-" * 50)
+            # for i, job in enumerate(results, 1):
+            #     print(f"[{i}] {job.get('job_title')} @ {job.get('company_name')}")
+            #     print(f"    職缺ID: {job.get('job_id')}")
+            #     print(f"    最終契合度: {job.get('final_score')}")
+            #     print(f"    推薦理由: {job.get('recommendation_reason')}")
+            #     print(f"    優勢: {job.get('strengths')}")
+            #     print(f"    劣勢: {job.get('weaknesses')}")
+            #     print(f"    面試建議: {job.get('interview_tips')}")
+            #     print("-" * 50)
             
             print("檢查第一筆輸出結構")
 
