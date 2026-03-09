@@ -2,6 +2,10 @@ import os
 import json
 from unittest.mock import patch
 from src.core.agent_engine.manager import CareerAgentManager
+from src.common.logger import setup_logger
+
+# 加入 Logger
+logger = setup_logger()
 
 def test_project_recommendation_flow():
     """
@@ -38,8 +42,11 @@ def test_project_recommendation_flow():
         print("================ 詳細輸出結果 ==============")
         print(json.dumps(final_result, indent=2, ensure_ascii=False))
         print("============================================")
+        print("\n💡 提示：您可以前往檢查 `logs/crewai_outputs/task_audit_trail.log`，看看 Agent 是否有留下稽核蹤跡！")
         
     except Exception as e:
+        # [修復] 將原本單純的 print 改為 logger.error，這樣錯誤才會進 log
+        logger.error(f"測試過程中發生錯誤: {e}", exc_info=True)
         print(f"❌ Side Project 推薦流程執行失敗: {e}")
 
 if __name__ == "__main__":

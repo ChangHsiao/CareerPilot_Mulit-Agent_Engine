@@ -1,12 +1,12 @@
 # src/features/matching/matcher.py
 import math
 import statistics
-import logging
 import numpy as np
 from typing import List, Dict, Any
+from src.common.logger import setup_logger
 
 # 設定日誌記錄器
-logger = logging.getLogger(__name__)
+logger = setup_logger()
 
 # ==========================================
 # Part 1: 資料轉換層 (ETL) - 負責處理問卷原始資料

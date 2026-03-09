@@ -13,6 +13,9 @@ from src.core.database.qdrant_client import get_qdrant_client
 
 # 匯入重構後的服務
 from src.features.matching.service import CareerMatchingService
+from src.common.logger import setup_logger
+
+logger = setup_logger()
 
 def test_full_job_matching_flow():
     print("==================================================")
@@ -42,10 +45,10 @@ def test_full_job_matching_flow():
         )
         
         # 4. 準備測試資料 (以陳浩宇為例)
-        TEST_USER_ID = 1        # 根據你提供的資料庫現況，使用 user_id = 1
+        TEST_USER_ID = 2        # 根據你提供的資料庫現況，使用 user_id = 1
 
         # 原始履歷
-        TEST_DOCUMENT_ID = 1    # 對應 RESUME 表中的 resume_id = 2
+        TEST_DOCUMENT_ID = 2    # 對應 RESUME 表中的 resume_id = 2
         TEST_SOURCE_TYPE = "RESUME"  # 明確指定去「原始履歷」資料庫找
 
         # 優化履歷
@@ -120,13 +123,12 @@ def test_full_job_matching_flow():
                 print(f"\n❌ JSON 缺少欄位: {missing_keys}")
             
             print("\n🎉 職缺匹配模組測試通過！")
+            print("💡 提示：您可以前往檢查 `logs/crewai_outputs/task_audit_trail.log`，看看 Advisor 是否有留下稽核蹤跡！")
         else:
-            print("⚠️ 測試完成，但未找到符合條件的職缺。請確認資料庫中是否有對應地區與薪資的職缺。")
+            logger.warning("測試完成，但未找到符合條件的職缺。請確認資料庫中是否有對應地區與薪資的職缺。")
             
     except Exception as e:
-        print(f"❌ 測試過程中發生錯誤：{e}")
-        import traceback
-        traceback.print_exc()
+        logger.error(f"測試過程中發生錯誤: {e}", exc_info=True)
 
 if __name__ == "__main__":
     test_full_job_matching_flow()

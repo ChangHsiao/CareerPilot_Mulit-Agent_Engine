@@ -33,65 +33,66 @@ def test_resume_system_integration():
     # 前端傳入的 user_input
     task_type_str = "resume_analysis"
     user_input = {
-        "user_id": 21
+        "user_id": 8
     }
     
     # ---------------------------------------------------------
     # PART 1: 履歷分析 (RESUME_ANALYSIS)
     # ---------------------------------------------------------
-    # print(f"[任務 1] 啟動『履歷深度分析』...")
-    # print(f"👉 目標用戶: {user_input}")
+    print(f"[任務 1] 啟動『履歷深度分析』...")
+    print(f"👉 目標用戶: {user_input}")
     
     
-    # try:
-    #     # 執行任務
-    #     analysis_result = manager.run_task(
-    #         task_type_str=task_type_str,
-    #         user_input=user_input
-    #     )
+    try:
+        # 執行任務
+        analysis_result = manager.run_task(
+            task_type_str=task_type_str,
+            user_input=user_input
+        )
         
-    #     print("✅ [PART 1] 履歷分析任務執行成功！")
-    #     print("-" * 30)
-    #     # 輸出部分結果進行驗證
-    #     print(f"🔹 診斷摘要: {analysis_result.get('candidate_positioning', '無內容')}")
-    #     print(f"🔹 ATS 風險等級: {analysis_result.get('ats_risk_level', '未知')}")
+        print("✅ [PART 1] 履歷分析任務執行成功！")
+        print("-" * 30)
+        # 輸出部分結果進行驗證
+        print(f"🔹 診斷摘要: {analysis_result.get('candidate_positioning', '無內容')}")
+        print(f"🔹 ATS 風險等級: {analysis_result.get('ats_risk_level', '未知')}")
         
-    # except Exception as e:
-    #     print(f"❌ [PART 1] 履歷分析執行失敗: {str(e)}")
-    #     # 若分析失敗，通常後續優化也會因缺乏分析結果而受阻，故中斷測試
-    #     return
+    except Exception as e:
+        print(f"❌ [PART 1] 履歷分析執行失敗: {str(e)}")
+        # 若分析失敗，通常後續優化也會因缺乏分析結果而受阻，故中斷測試
+        return
 
     # ---------------------------------------------------------
     # PART 2: 履歷優化 (RESUME_OPT)
     # ---------------------------------------------------------
     #優化任務輸入
-    task_type_str="resume_opt"
-    opt_input = {
-        "user_id": 2
-    }
+    # task_type_str="resume_opt"
+    # opt_input = {
+    #     "user_id": 2
+    # }
     
-    print(f"[任務 2] 啟動『履歷內容優化』...")
-    print(f"👉 目標用戶: {opt_input}")
+    # print(f"[任務 2] 啟動『履歷內容優化』...")
+    # print(f"👉 目標用戶: {opt_input}")
     
     
-    try:
-        # 執行任務
-        opt_result = manager.run_task(
-            task_type_str=task_type_str,
-            user_input=opt_input
-        )
+    # try:
+    #     # 執行任務
+    #     opt_result = manager.run_task(
+    #         task_type_str=task_type_str,
+    #         user_input=opt_input
+    #     )
         
-        print("✅ [PART 2] 履歷優化任務執行成功！")
-        print("-" * 30)
-        # 輸出部分優化內容驗證
-        print(f"🔹 優化成果預覽 (前 200 字):")
-        # 假設優化結果存放在特定欄位，或直接回傳結構化履歷
-        print(json.dumps(opt_result, indent=2, ensure_ascii=False)[:400] + "...")
+    #     print("✅ [PART 2] 履歷優化任務執行成功！")
+    #     print("-" * 30)
+    #     # 輸出部分優化內容驗證
+    #     print(f"🔹 優化成果預覽 (前 200 字):")
+    #     # 假設優化結果存放在特定欄位，或直接回傳結構化履歷
+    #     print(json.dumps(opt_result, indent=2, ensure_ascii=False)[:400] + "...")
         
-    except Exception as e:
-        print(f"❌ [PART 2] 履歷優化執行失敗: {str(e)}")
+    # except Exception as e:
+    #     print(f"❌ [PART 2] 履歷優化執行失敗: {str(e)}")
 
     print("" + "="*60)
+    print("💡 提示：您可以前往檢查 `logs/crewai_outputs/task_audit_trail.log`，看看 Agent 是否有留下稽核蹤跡！")
     print("✨ 系統整合測試結束")
     print("="*60)
 

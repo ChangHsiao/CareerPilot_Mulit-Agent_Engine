@@ -9,6 +9,9 @@ from crewai.tools import BaseTool
 from src.features.analysis.calculator import CareerAnalyzer
 from src.features.matching.matcher import JobMatcher
 from src.core.database.supabase_client import get_latest_resume
+from src.common.logger import setup_logger
+
+logger = setup_logger()
 
 def safe_parse_json(input_data: Union[str, Dict, Any]) -> Dict:
     """Safely parse input string or dict into dict"""
@@ -41,10 +44,17 @@ class FetchResumeFromDBTool(BaseTool):
         try:
             # 確保提取出乾淨的字串 ID
             clean_id = str(user_id).strip().strip("'").strip('"')
-            print(f"DEBUG: fetch_resume_from_db 提取 user_id: {clean_id}")
+            logger.info(f"開始從資料庫獲取履歷 (user_id: {clean_id})")
             return str(get_latest_resume(clean_id))
         except Exception as e:
-            return f"Error fetching resume: {str(e)}"
+            logger.error(f"從資料庫獲取履歷發生錯誤: {str(e)}", exc_info=True)
+            return (
+                f"SYSTEM ERROR: FetchResumeFromDBTool 發生致命錯誤 ({str(e)})。\n"
+                "【最高指令 - 防幻覺守則】：\n"
+                "1. 由於無法取得真實履歷，你絕對不可瞎編或猜測履歷內容。\n"
+                "2. 請立即在最終報告中向使用者說明：『⚠️ 系統維護中，無法獲取您的履歷資料，履歷驗證分析暫停。』\n"
+                "3. 停止針對履歷部分的任何分析。"
+            )
 
 # 2. Calculate Technical Vectors Tool
 class CalculateTechVectorsInput(BaseModel):
@@ -59,6 +69,7 @@ class CalculateTechVectorsTool(BaseTool):
     survey_json_str: str = Field(default="")
     
     def _run(self, user_id: str) -> str:
+        logger.info(f"開始計算技術分數向量 (user_id: {user_id})")
         default_scores = {"D1": 0.5, "D2": 0.5, "D3": 0.5, "D4": 0.5, "D5": 1.0, "D6": 1.0}
         try:
             user_data_raw = safe_parse_json(self.survey_json_str)
@@ -80,8 +91,12 @@ class CalculateTechVectorsTool(BaseTool):
             else:
                 return str(default_scores)
         except Exception as e:
-            # 發生任何錯誤都回傳預設值
-            return f"Error (using defaults): {str(default_scores)}. Details: {str(e)}"
+            logger.error(f"計算技術分數向量發生錯誤: {str(e)}", exc_info=True)
+            return (
+                f"SYSTEM ERROR: CalculateTechVectorsTool 發生致命錯誤 ({str(e)})。\n"
+                "【最高指令 - 防幻覺守則】：\n"
+                "你現在沒有六維分數可以參考。請立即終止分析並向使用者回報：『⚠️ 技術分數計算引擎暫時發生異常，無法產出能力雷達圖，請稍後重試。』"
+            )
 
 # 3. Calculate match score tool
 class CalculateMatchScoreInput(BaseModel):
@@ -94,6 +109,7 @@ class CalculateMatchScoreTool(BaseTool):
     args_schema: type[BaseModel] = CalculateMatchScoreInput
     
     def _run(self, vectors_str: str, target_role: str) -> str:
+        logger.info(f"開始計算目標職位匹配分數 (target_role: {target_role})")
         try:
             vectors = safe_parse_json(vectors_str)
             if not vectors:
@@ -102,4 +118,9 @@ class CalculateMatchScoreTool(BaseTool):
             score = JobMatcher.calculate_match_score(vectors, target_role)
             return str(score)
         except Exception as e:
-            return f"Error calculating match score: {str(e)}"
+            logger.error(f"計算目標職位匹配分數發生錯誤: {str(e)}", exc_info=True)
+            return (
+                f"SYSTEM ERROR: CalculateMatchScoreTool 發生致命錯誤 ({str(e)})。\n"
+                "【最高指令 - 防幻覺守則】：\n"
+                "由於計算引擎錯誤，你無法得知雙方匹配度分數。請不要編造分數，並向使用者回報：『⚠️ 匹配度計算異常，本篇報告將跳過契合度數值驗證。』"
+            )

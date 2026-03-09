@@ -2,6 +2,9 @@ import os
 import json
 import pytest
 from src.core.agent_engine.manager import CareerAgentManager
+from src.common.logger import setup_logger
+
+logger = setup_logger()
 
 def test_cover_letter_flow_with_optimization_id():
     """
@@ -42,11 +45,11 @@ def test_cover_letter_flow_with_optimization_id():
         print("[正文內容]:")
         print(final_result["content"])
         print("="*50 + "\n")
-        print("完整輸出結構")
-        print(final_result)
+        print("💡 提示：您可以前往檢查 `logs/crewai_outputs/task_audit_trail.log` 與 `agent_thoughts_trail.log`，看看 Agent 的思考與稽核蹤跡！")
         
     except Exception as e:
-        print(f"\n❌ [測試失敗] 流程執行出現錯誤: {e}")
+        logger.error(f"Cover Letter 流程執行失敗 (optimization_id): {e}", exc_info=True)
+        print(f"\n❌ [測試失敗] 流程執行出現錯誤，詳細請看 career_system_error.log: {e}")
         pytest.fail(f"Cover Letter 流程執行失敗 (optimization_id): {e}")
 
 def test_cover_letter_flow_with_resume_id():
@@ -88,17 +91,18 @@ def test_cover_letter_flow_with_resume_id():
         print("[正文內容]:")
         print(final_result["content"])
         print("="*50 + "\n")
-        print("完整輸出結構")
-        print(final_result)
+        print("💡 提示：您可以前往檢查 `logs/crewai_outputs/task_audit_trail.log` 與 `agent_thoughts_trail.log`，看看 Agent 的思考與稽核蹤跡！")
         
     except Exception as e:
-        print(f"\n❌ [測試失敗] 流程執行出現錯誤: {e}")
+        logger.error(f"Cover Letter 流程執行失敗 (resume_id): {e}", exc_info=True)
+        print(f"\n❌ [測試失敗] 流程執行出現錯誤，詳細請看 career_system_error.log: {e}")
         pytest.fail(f"Cover Letter 流程執行失敗 (resume_id): {e}")
 
 if __name__ == "__main__":
-    # print("=== 執行 Cover Letter 測試 ===")
-    # print("1. 測試 optimization_id")
-    # test_cover_letter_flow_with_optimization_id()
+    print("=== 執行 Cover Letter 測試 ===")
+    print("說明：請挑選一種方式測試。執行完畢後請觀察 logs/crewai_outputs/ 內的紀錄。")
+    # print("\n1. 測試 optimization_id")
+    test_cover_letter_flow_with_optimization_id()
     
     print("\n2. 測試 resume_id")
-    test_cover_letter_flow_with_resume_id()
+    # test_cover_letter_flow_with_resume_id()

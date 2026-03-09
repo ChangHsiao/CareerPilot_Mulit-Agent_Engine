@@ -1,6 +1,9 @@
 from typing import Any, Dict
 from crewai.tools import BaseTool
 from src.core.database.supabase_client import get_supabase_client
+from src.common.logger import setup_logger
+
+logger = setup_logger()
 
 class DatabaseTools:
     """
@@ -12,6 +15,7 @@ class DatabaseTools:
         """
         根據 user_id 到 Supabase 抓取用戶最新的履歷內容。
         """
+        logger.info(f"開始抓取最新的履歷內容 (user_id: {user_id})")
         supabase = get_supabase_client()
         try:
             response = supabase.table("resume") \
@@ -27,6 +31,7 @@ class DatabaseTools:
             return response.data
 
         except Exception as e:
+            logger.error(f"抓取用戶最新履歷內容失敗: {str(e)}", exc_info=True)
             return {"error": f"資料庫抓取失敗: {str(e)}"}
 
     @staticmethod
@@ -34,6 +39,7 @@ class DatabaseTools:
         """
         根據 user_id 到 Supabase 抓取用戶問卷中 questionnaire_response 不為空的最新結果。
         """
+        logger.info(f"開始抓取最新的問卷結果 (user_id: {user_id})")
         supabase = get_supabase_client()
         try:
             response = supabase.table("career_survey") \
@@ -59,6 +65,7 @@ class DatabaseTools:
             return module_c.get("q17_target_role", "未指定目標職位")
 
         except Exception as e:
+            logger.error(f"抓取用戶問卷結果失敗: {str(e)}", exc_info=True)
             return {"error": f"資料庫抓取失敗: {str(e)}"}
     
     @staticmethod
@@ -66,6 +73,7 @@ class DatabaseTools:
         """
         根據 user_id 到 Supabase 抓取用戶最新的履歷分析報告。
         """
+        logger.info(f"開始抓取最新的履歷分析報告 (user_id: {user_id})")
         supabase = get_supabase_client()
         try:
             fields = (
@@ -87,6 +95,7 @@ class DatabaseTools:
             return response.data
 
         except Exception as e:
+            logger.error(f"抓取用戶履歷分析報告失敗: {str(e)}", exc_info=True)
             return {"error": f"資料庫抓取失敗: {str(e)}"}
 
 

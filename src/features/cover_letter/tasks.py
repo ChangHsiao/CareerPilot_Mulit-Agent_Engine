@@ -1,7 +1,12 @@
 from crewai import Task
 from .schemas import CoverLetter
+from src.common.logger import setup_logger
+from src.common.crewai_callbacks import task_audit_callback
+
+logger = setup_logger()
 
 def get_cover_letter_task(agent, tools) -> Task:
+    logger.info("開始生成求職主任務 (Cover Letter Task)...")
     return Task(
         description="""
         必需先使用下列的工具進行資料的獲取，若未傳入參數的工具則不需要使用:
@@ -30,5 +35,6 @@ def get_cover_letter_task(agent, tools) -> Task:
         """,
         expected_output="按照上述格式排列完整的求職信純文字內容，需包含主旨與正文。全文嚴禁包含任何 Markdown 格式標記。",
         agent=agent,
-        tools=tools
+        tools=tools,
+        callback=task_audit_callback
     )

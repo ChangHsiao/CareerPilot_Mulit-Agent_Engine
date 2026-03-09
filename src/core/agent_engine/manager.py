@@ -103,7 +103,8 @@ class CareerAgentManager:
                 tools=agent_cfg.get("tools", []),
                 verbose=True,
                 llm=self.llm,
-                allow_delegation=False
+                allow_delegation=False,
+                step_callback=agent_cfg.get("step_callback") # 掛載 agent 步驟回呼
             )
             worker_agents.append(worker)
 
@@ -117,6 +118,7 @@ class CareerAgentManager:
             1. **驗證**：檢查 Worker 的產出是否符合邏輯、是否出現幻覺。
             2. **修潤**：確保語氣專業、溫暖且具建設性（符合繁體中文習慣）。
             3. **格式化**：將最終結果強制轉換為嚴格的 JSON 格式。
+            【最高防幻覺協議】：如果在審查過程中看到任何 "SYSTEM ERROR"、"發生致命錯誤" 或 "無法存取資料" 等警告，代表前置任務資料已損毀。此時你【必須立刻放棄生成正常報告】，直接輸出包含錯誤代碼與系統維護提示的簡化版 JSON，絕對不可自行填補或猜測分數與內容！
             """,
             verbose=True,
             llm=self.qa_llm, # 使用低溫度的 LLM
@@ -134,7 +136,9 @@ class CareerAgentManager:
                 description=task_cfg["description"],
                 expected_output=task_cfg["expected_output"],
                 agent=worker_agents[idx], # 對應的 Agent
-                context=previous_tasks if idx > 0 else None # 串接上下文
+                context=previous_tasks if idx > 0 else None, # 串接上下文
+                callback=task_cfg.get("callback"), # 掛載 callback
+                tools=task_cfg.get("tools", []) # 掛載 tools (確保 Task 層級也有工具可用)
             )
             crew_tasks.append(worker_task)
             previous_tasks.append(worker_task)
@@ -155,6 +159,7 @@ class CareerAgentManager:
             {qa_extra_instructions}
             
             **關鍵指示**: 如果 Worker 的產出有遺漏或矛盾，請根據上下文進行合理的修正或標註，但不要自行捏造數據。
+            【警告】：若上下文出現 "SYSTEM ERROR" 等工具異常警告，請嚴格遵守【最高防幻覺協議】，拒絕瞎編雷達圖分數，並在內文中標註系統異常。
             """,
             expected_output="最終審核通過的結構化 JSON 報告。",
             agent=qa_agent,

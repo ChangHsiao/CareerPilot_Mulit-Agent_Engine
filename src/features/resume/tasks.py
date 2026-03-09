@@ -1,4 +1,8 @@
 from crewai import Task
+from src.common.logger import setup_logger
+from src.common.crewai_callbacks import task_audit_callback
+
+logger = setup_logger()
 
 # ==========================================
 # Task 定義與邏輯規則 (單一事實來源)
@@ -58,16 +62,20 @@ OPTIMIZATION_TASK_DESCRIPTION = """
 
 def create_analysis_task(agent) -> Task:
     """建立履歷分析任務"""
+    logger.info("開始生成履歷分析任務 (Analysis Task)...")
     return Task(
         description=ANALYSIS_TASK_DESCRIPTION,
         expected_output="一份純文字的診斷分析報告備忘錄，包含【清楚度、證據力、關鍵字、一致性】分析與風險警示。",
-        agent=agent
+        agent=agent,
+        callback=task_audit_callback
     )
 
 def create_optimization_task(agent) -> Task:
     """建立履歷優化任務"""
+    logger.info("開始生成履歷優化任務 (Optimization Task)...")
     return Task(
         description=OPTIMIZATION_TASK_DESCRIPTION,
         expected_output="優化後的完整履歷全文與風格定義。",
-        agent=agent
+        agent=agent,
+        callback=task_audit_callback
     )
