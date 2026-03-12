@@ -13,94 +13,89 @@ def get_experienced_mock_data():
     """回傳有經驗者的問卷與特質假資料 (履歷將由 Manager 透過 user_id 從 DB 撈取)"""
     survey_data = {
     "module_a": {
-    "q5_devops": "cloud_manual",
-    "q8_domain": "B2B SaaS, Agile Management",
-    "q3_backend": "db_auth_testing",
-    "q6_ai_data": "pandas_numpy",
-    "q2_frontend": "optimization_ssr",
+    "q5_devops": "docker_basic",
+    "q8_domain": "Mobile UX, Multimedia Streaming",
+    "q3_backend": "unfamiliar",
+    "q6_ai_data": "api_consumer",
+    "q2_frontend": "basic_html_css",
     "q4_database": [
-      "rdbms_sql",
-      "nosql_document",
-      "key_value_cache"
+      "nosql_document"
     ],
-    "q7_security": "auth_rbac",
+    "q7_security": "owasp_basic",
     "q1_languages": [
       {
+        "name": "Swift",
+        "score": 5
+      },
+      {
         "name": "JavaScript",
-        "score": 5
-      },
-      {
-        "name": "TypeScript",
-        "score": 5
-      },
-      {
-        "name": "SQL",
         "score": 4
+      },
+      {
+        "name": "HTML/CSS",
+        "score": 3
       }
     ]
     },
     "module_b": {
-    "q14_process": "process_optimization",
-    "q15_english": "global_comm",
-    "q13_learning": "deep_dive_sharing",
-    "q10_tech_choice": "tradeoff_analysis",
-    "q12_code_review": "architecture_solid",
-    "q9_troubleshoot": "incident_analysis",
-    "q11_communication": "value_driven"
+    "q14_process": "agile_scrum",
+    "q15_english": "fluent_reading",
+    "q13_learning": "consistent_input",
+    "q10_tech_choice": "team_familiarity",
+    "q12_code_review": "logic_safety",
+    "q9_troubleshoot": "log_search",
+    "q11_communication": "alternative_solution"
     },
     "module_c": {
     "q18_industry": "product_company",
-    "q17_target_role": "fullstack",
-    "q16_current_level": "lead_architect",
+    "q17_target_role": "frontend",
+    "q16_current_level": "mid_level",
     "q19_search_status": "passive_open"
     },
     "module_d": {
-    "q21_pressure": "consider_short_term",
+    "q21_pressure": "prefer_health",
     "q20_values_top3": [
+      "work_life_balance",
       "technical_growth",
-      "financial_reward",
       "team_culture"
     ],
-    "q22_career_type": "manager",
+    "q22_career_type": "generalist",
     "q23_learning_style": [
-      "official_docs",
-      "hands_on_projects",
-      "mentorship_community"
+      "video_courses",
+      "hands_on_projects"
     ]
     }
     }
 
     trait_data = {
-    "trait_created_at": "2026-03-04 11:06:00Z",
+    "trait_created_at": "2026-03-04 11:05:00Z",
     "trait_raw_scores": {
-    "decision": 2,
-    "learning": 3,
-    "transfer": 5,
-    "ambiguity": 2,
-    "structure": 9
+    "decision": 3,
+    "learning": 7,
+    "transfer": 4,
+    "ambiguity": 3,
+    "structure": 0
     },
-    "primary_archetype": "STRUCTURE_ARCHITECT",
+    "primary_archetype": "LEARNING_ACCELERATOR",
     "trait_raw_responses": {
-    "Q1": "C",
-    "Q2": "A",
-    "Q3": "A",
-    "Q4": "B",
-    "Q5": "A",
-    "Q6": "B",
-    "Q7": "B",
+    "Q1": "B",
+    "Q2": "C",
+    "Q3": "B",
+    "Q4": "A",
+    "Q5": "B",
+    "Q6": "A",
+    "Q7": "A",
     "Q8": "A",
     "Q9": "A",
-    "Q10": "A"
+    "Q10": "C"
     },
-    "secondary_archetypes": [
-    "CROSS_DOMAIN_INTEGRATOR"
-    ],
+    "secondary_archetypes": [],
     "trait_normalized_scores": {
-    "decision": 43,
-    "learning": 50,
-    "transfer": 86,
-    "ambiguity": 57,
-    "structure": 90
+    "decision": 57,
+    "learning": 90,
+    "transfer": 71,
+    "ambiguity": 71,
+    "structure": 0
     }
     }
     
@@ -112,7 +107,7 @@ def get_entry_level_mock_data():
     survey_data = {
     "module_a": {
     "q5_devops": "ftp_git_pull",
-    "q8_domain": "行銷／消費者行為",
+    "q8_domain": "無",
     "q3_backend": "script_only",
     "q6_ai_data": "api_only",
     "q2_frontend": "no_experience",
@@ -122,61 +117,61 @@ def get_entry_level_mock_data():
     },
     "module_b": {
     "q14_process": "no_process",
-    "q15_english": "slow_reading",
-    "q13_learning": "hoarding",
-    "q10_tech_choice": "just_learned",
+    "q15_english": "translate_dependent",
+    "q13_learning": "fixed_schedule",
+    "q10_tech_choice": "popular_stars",
     "q12_code_review": "formalism",
-    "q9_troubleshoot": "restart",
-    "q11_communication": "passive_follow"
+    "q9_troubleshoot": "log_search",
+    "q11_communication": "direct_reject"
     },
     "module_c": {
-    "q18_industry": "startup",
-    "q17_target_role": "frontend",
+    "q18_industry": "software_house",
+    "q17_target_role": "backend",
     "q16_current_level": "entry_level",
-    "q19_search_status": "passive_observing"
+    "q19_search_status": "student_training"
     },
     "module_d": {
-    "q21_pressure": "tend_to_decline",
+    "q21_pressure": "accept_without_hesitation",
     "q20_values_top3": [
-      "work_life_balance",
-      "culture_fit",
-      "technical_growth"
+      "financial_reward",
+      "technical_growth",
+      "status"
     ],
-    "q22_career_type": "generalist",
+    "q22_career_type": "specialist",
     "q23_learning_style": [
-      "video_courses",
-      "documentation"
+      "hands_on_projects",
+      "mentorship_community"
     ]
     }
     }
 
     trait_data = {
-    "trait_created_at": "2026-03-04T09:05:00Z",
+    "trait_created_at": "2026-03-04 11:05:00Z",
     "trait_raw_scores": {
     "decision": 3,
-    "learning": 5,
-    "transfer": 3,
+    "learning": 7,
+    "transfer": 4,
     "ambiguity": 3,
     "structure": 0
     },
     "primary_archetype": "LEARNING_ACCELERATOR",
     "trait_raw_responses": {
     "Q1": "B",
-    "Q2": "D",
+    "Q2": "C",
     "Q3": "B",
     "Q4": "A",
     "Q5": "B",
     "Q6": "A",
     "Q7": "A",
-    "Q8": "B",
+    "Q8": "A",
     "Q9": "A",
     "Q10": "C"
     },
     "secondary_archetypes": [],
     "trait_normalized_scores": {
     "decision": 57,
-    "learning": 70,
-    "transfer": 57,
+    "learning": 90,
+    "transfer": 71,
     "ambiguity": 71,
     "structure": 0
     }
@@ -219,7 +214,7 @@ def verify_db_save(user_id: str):
 def test_experienced_analysis():
     """1. 帶入有經驗者假資料，並從 DB 撈取其履歷進行測試"""
     print("\n\n====== TEST CASE 1: EXPERIENCED ANALYSIS (Mock Data + DB Resume) ======")
-    user_id = "7" # 強迫 Agent 去撈資料庫裡的該 user_id 的履歷
+    user_id = "6" # 強迫 Agent 去撈資料庫裡的該 user_id 的履歷
     manager = CareerAgentManager()
     survey_data, trait_data = get_experienced_mock_data()
     trait_data["user_id"] = user_id
