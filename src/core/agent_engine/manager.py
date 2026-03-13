@@ -39,6 +39,15 @@ class CareerAgentManager:
             
         print(f"🚀 Manager 收到請求: {task_type_str} | User ID: {user_id}")
 
+        # [FIX] 確保傳入 Prompt 的 JSON 字串顯示原始中文，而非 \uXXXX
+        for json_key in ["survey_json", "trait_json", "resume_json"]:
+            if json_key in user_input and isinstance(user_input[json_key], str):
+                try:
+                    parsed_dict = json.loads(user_input[json_key])
+                    user_input[json_key] = json.dumps(parsed_dict, ensure_ascii=False)
+                except json.JSONDecodeError:
+                    pass
+
         # 1. 自動分流邏輯 (Auto-Dispatch) - analysis 有無經驗
         if task_type_str == "career_analysis":
             try:
