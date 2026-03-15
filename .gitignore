@@ -30,3 +30,4 @@ vibe_coding_prompt/
 .gitignore
 
 *.log
+logs/
