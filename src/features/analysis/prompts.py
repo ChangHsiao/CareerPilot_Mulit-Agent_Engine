@@ -1,6 +1,7 @@
 from typing import Dict, Any, Optional
 from src.core.agent_engine.task_types import TaskType
 from .schemas import CareerReport
+from .schemas import STANDARD_ROLES
 from .agents import (
     create_tech_lead_agent,
     create_psychologist_agent,
@@ -110,7 +111,8 @@ def get_analysis_config(task_type: TaskType, inputs: Dict[str, Any]) -> Optional
         # 建立特質分析任務並注入參數
         trait_task = create_trait_analysis_task(psychologist)
         trait_task.description = trait_task.description.format(
-            trait_json=inputs.get("trait_json", "{}")
+            trait_json=inputs.get("trait_json", "{}"),
+            STANDARD_ROLES=STANDARD_ROLES
         )
         
         final_entry_task = create_entry_level_final_task(advisor)

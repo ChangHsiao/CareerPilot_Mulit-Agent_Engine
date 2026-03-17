@@ -86,7 +86,9 @@ Step 1. 呼叫 'Calculate Technical Vectors' 工具 (傳入 user_id 作為參數
    - 記錄下工具回傳的 D1 到 D6 的確切分數。
    - **注意：無論工具回傳的英文維度為何，請將 D1~D6 視為以下固定維度進行後續驗證與評論：**
      D1: 前端開發、D2: 後端開發、D3: 運維部署、D4: AI與數據、D5: 工程品質、D6: 軟實力。
-Step 2. 呼叫 'Calculate Job Match Score' 工具 (傳入 user_id 作為參數)。
+Step 2. 呼叫 'Calculate Job Match Score' 工具。
+   - 傳入 `vectors_str`：將 Step 1 得到的 D1~D6 數值字典序列化為 JSON 字串傳入。
+   - 傳入 `target_role`：從 [問卷資料] 的 `q17_target_role` 欄位取得目標職位名稱。
    - 記錄下工具回傳的「匹配分數 (Match Score)」。
 Step 3. 呼叫 'Fetch Resume From Database' 工具 (傳入 user_id 作為參數) 獲取最新履歷。
 Step 4. 驗證 (Fact Check)：對比「履歷內容」與「問卷填寫的分數/經驗」，指出潛力被低估或過度誇大的部分。
@@ -100,9 +102,22 @@ D1=[你在Step1拿到的D1分數], D2=[你在Step1拿到的D2分數], D3=[你在
 
 接著在下方撰寫你詳細的技術診斷與職缺匹配分析結果。"""
 
-TRAIT_ANALYSIS_DESCRIPTION = """分析人格特質。
-資料: {trait_json}
-根據使用者的分數，對照「認知分析理論」，評估其職位適配性。"""
+TRAIT_ANALYSIS_DESCRIPTION = """根據使用者心理特質問卷分數，進行 Cognitive Framework 分析。
+[特質資料]: {trait_json}
+
+請嚴格依照以下格式輸出特質分析備忘錄：
+
+【特質描述】
+- Structure（架構力）：分數解讀與行為表現預測
+- Ambiguity（模糊耐受度）：分數解讀與職位適配性
+- Decision（決策力）：分數解讀與 Tech Lead 潛力評估
+- Transfer（敘事遷移）：分數解讀與跨領域轉換能力
+
+【職位適配性評估】
+綜合四個維度，說明使用者最適合的職位類型（從 {STANDARD_ROLES} 清單選取）及理由。
+
+【學習優勢/風險】
+指出哪個特質維度是最大的學習加速器（優勢），哪個是最需要刻意訓練的盲點（風險）。"""
 
 # --- 舊版 ---
 # FINAL_REPORT_DESCRIPTION = f"""綜合技術與心理分析，生成最終的 CareerReport JSON。
@@ -146,10 +161,16 @@ ENTRY_LEVEL_TRANSITION_DESCRIPTION = f"""分析履歷中的非技術經驗，進
 **核心任務**：
 1. **獲取履歷**：必須先使用 'Fetch Resume From Database' 工具獲取使用者 {{user_id}} 的最新履歷資料。
 2. **Skill Translation (技能轉譯)**: 針對獲取到的履歷內容，找出至少 3 個具體行為並對照程式概念。
-3. **Role Alignment (職位對齊)**: 請依照 [問卷資料] 中的目標職位 (target_role)，將上述的技能轉譯結果與該目標職位進行連結與說明。若使用者未指定，請從標準清單 [{STANDARD_ROLES_STR}] 中推薦一個最適合的並說明理由。
-4. **潛力維度評分 (Potential Scoring)**: 根據履歷中展現的做事嚴謹度/邏輯性，以及人格特質問卷的分數，評估使用者的【D5 工程品質】與【D6 軟實力】潛力，以 0.5 ~ 5.0 給分（建議轉職者最高不超過 3.5），並在備忘錄結尾獨立寫出：
---- RAW_SCORES_START ---
-D1=0.5, D2=0.5, D3=0.5, D4=0.5, D5=[你評估的D5分數], D6=[你評估的D6分數]
+3. **Role Alignment (職位對齊)**: 請依照 [問卷資料] 中的目標職位 (target_role)，將上述的技能轉譯結果與該目標職位進行連結與說明。若使用者未指定，請從標準清單 [{STANDARD_ROLES}] 中推薦一個最適合的並說明理由。
+4. **潛力維度評分 (Potential Scoring)**: 根據履歷中展現的做事嚴謹度/邏輯性，以及人格特質問卷的分數，評估使用者的【D5 工程品質】與【D6 軟實力】潛力。**D5/D6 評分依據**：
+   - 1.0：履歷幾乎無系統化工作記錄
+   - 2.0：有跨部門協作或自主執行小規模完整專案
+   - 3.0：有系統性流程優化或完整文件化工作的記錄
+   - 3.5（轉職者最高上限）：同上，且有主動學習技術工具的佐證
+
+   以 0.5 ~ 3.5 給分，並在備忘錄結尾獨立寫出：
+   --- RAW_SCORES_START ---
+   D1=0.5, D2=0.5, D3=0.5, D4=0.5, D5=[你評估的D5分數], D6=[你評估的D6分數]
 --- RAW_SCORES_END ---
 """
 
