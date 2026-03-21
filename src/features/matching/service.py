@@ -8,7 +8,7 @@ from src.common.logger import setup_logger
 logger = setup_logger()
 from src.features.matching.qdrant_retriever import JobMatchRetriever, UserProfileRetriever
 from src.features.matching.matcher import JobMatcher
-from src.features.matching.advisor import CareerLLMAdvisor
+# from src.features.matching.advisor import CareerLLMAdvisor
 from src.features.matching.schemas import JobMatchRequest, JobMatchingResponse
 
 class CareerMatchingService:
@@ -25,8 +25,10 @@ class CareerMatchingService:
         self.resume_retriever = UserProfileRetriever(qdrant_client)
         self.job_retriever = JobMatchRetriever(qdrant_client, "job_vectors")
         
-        # 初始化 AI 顧問
-        self.llm_advisor = CareerLLMAdvisor(api_key=openai_api_key)
+        # [改動] 改為使用 CareerAgentManager 管理 AI 呼叫
+        # 保留 openai_api_key 參數接收（對外介面不變），但實際由 Manager 透過環境變數管理 API Key
+        from src.core.agent_engine.manager import CareerAgentManager
+        self.agent_manager = CareerAgentManager(model_name="gpt-4o-mini", temp=0.5)
 
     # 修改點 2：函數入口新增 document_id 與 source_type 參數
     # (註：如果前端是傳 Pydantic DTO 物件進來，這裡可以直接改成接收 request: JobMatchRequest)
@@ -266,18 +268,37 @@ class CareerMatchingService:
                     req_lines = list(dict.fromkeys(req_lines)) # 去重
                     clean_requirements = " | ".join(req_lines)
                     
-                    # 生成 AI 洞察（4.1 傳入職缺文字 + 4.2 傳入履歷摘要）
-                    ai_insights = self.llm_advisor.generate_job_insights(
-                        job_title=details.get('job_title', '未知職缺'),
-                        user_6d=user_6d_profile,
-                        job_6d=details,
-                        match_score=f_final_pct,
-                        # [4.1] 傳入已查出的職缺文字（限制長度避免 token 超出）
-                        job_description=str(details.get('job_description', ''))[:500],
-                        job_requirements=clean_requirements[:300],
-                        # [4.2] 傳入 Phase 0.5 查出的履歷文字摘要
-                        resume_summary=resume_summary,
-                    )
+                    # [改動] 改為透過 CareerAgentManager 呼叫 CrewAI 流程
+                    ai_input = {
+                        "user_id": user_id,  # manager.run_task 需要 user_id
+                        "job_title": details.get('job_title', '未知職缺'),
+                        "match_score": f_final_pct,
+                        "resume_summary": resume_summary,
+                        "job_description": str(details.get('job_description', ''))[:500],
+                        "job_requirements": clean_requirements[:300],
+                        "user_6d": user_6d_profile,
+                        "job_6d": {
+                            "d1_frontend":  details.get("d1_frontend", 0),
+                            "d2_backend":   details.get("d2_backend", 0),
+                            "d3_devops":    details.get("d3_devops", 0),
+                            "d4_ai_data":   details.get("d4_ai_data", 0),
+                            "d5_quality":   details.get("d5_quality", 0),
+                            "d6_soft_skills": details.get("d6_soft_skills", 0),
+                        },
+                    }
+
+                    # 呼叫 Manager（與其他模組統一的入口）
+                    ai_insights = self.agent_manager.run_task("job_matching", ai_input)
+
+                    # 安全降級：若 AI 呼叫失敗，ai_insights 可能是 error dict
+                    if ai_insights.get("status") == "error":
+                        logger.warning(f"CrewAI 洞察生成失敗: {ai_insights.get('message')}")
+                        ai_insights = {
+                            "recommendation_reason": "系統分析中...",
+                            "strengths": "無",
+                            "weaknesses": "無",
+                            "interview_tips": "無",
+                        }
                     
                     return {
                         "job_id": str(details.get('job_id', '')),
@@ -298,7 +319,7 @@ class CareerMatchingService:
                     logger.warning(f"單筆職缺分析失敗: {e}")
                     return None
 
-            with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
                 final_json_list = list(executor.map(format_and_analyze, top_10_candidates))
                 
             return [j for j in final_json_list if j is not None]

@@ -5,7 +5,7 @@ class TaskType(Enum):
     CAREER_ANALYSIS = "career_analysis"         # 通用職涯分析 (自動偵測)
     CAREER_ANALYSIS_EXPERIENCED = "career_analysis_experienced" # 有經驗者分析
     CAREER_ANALYSIS_ENTRY_LEVEL = "career_analysis_entry_level" # 無經驗者/轉職分析
-    JOB_MATCHING = "job_matching" # 職缺匹配(不在模組中)
+    JOB_MATCHING = "job_matching" # 職缺匹配
     # RESUME_CRITIQUE = "resume_critique"               # 履歷深度診斷
     # RESUME_GENERATION = "resume_generation"           # 履歷優化與生成
     RESUME_ANALYSIS = "resume_analysis"               # 履歷分析 

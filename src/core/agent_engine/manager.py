@@ -93,7 +93,12 @@ class CareerAgentManager:
         # 0. 注入 分析報告所需 Metadata 資訊 (動態獲取版本號)
         # user_input["user_id"] = user_id
         user_input["current_timestamp"] = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='milliseconds').replace("+00:00", "Z")
-        user_input["report_version"] = get_next_version_number(user_id)
+
+        # [修改] job_matching 不需要版本號，跳過 Supabase 查詢以節省資源
+        if task_type != TaskType.JOB_MATCHING:
+            user_input["report_version"] = get_next_version_number(user_id)
+        else:
+            user_input["report_version"] = "N/A"
         
         # 1. 取得任務配置 (Configuration) - 引入 config 找與對應 task_type 的藍圖
         config = self._get_process_config(task_type, user_input)

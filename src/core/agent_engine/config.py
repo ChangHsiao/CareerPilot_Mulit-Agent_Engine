@@ -33,4 +33,9 @@ def get_config_by_type(task_type: TaskType, inputs: Dict[str, Any]) -> Optional[
         from src.features.course.prompts import get_course_config
         return get_course_config(task_type, inputs)
 
+    # 6. 職缺匹配洞察分析 (Job Matching Insight)
+    elif task_type == TaskType.JOB_MATCHING:
+        from src.features.matching.prompts import get_matching_config
+        return get_matching_config(task_type, inputs)
+
     return None

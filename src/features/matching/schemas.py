@@ -62,3 +62,14 @@ class JobMatchingResponse(BaseModel):
     """
     results: List[JobMatchResult] = Field(default_factory=list, description="推薦的職缺列表 (Top 10)")
     status: str = Field("success", description="執行狀態")
+
+class JobInsightResult(BaseModel):
+    """
+    單筆職缺的 AI 洞察報告。
+    此模型供 CrewAI QA Agent 的 output_pydantic 使用，
+    保證輸出格式與現有 find_best_jobs() 的回傳結構相容。
+    """
+    recommendation_reason: str = Field("", description="推薦此職缺的核心理由，結合候選人具體背景 (約60字)")
+    strengths: str = Field("", description="候選人應徵此職缺的最大優勢，引用履歷中的具體技能 (約60字)")
+    weaknesses: str = Field("", description="候選人較缺乏、需要補足的部分，對應職缺具體要求 (約60字)")
+    interview_tips: str = Field("", description="針對落差給予一項具體的面試準備建議 (約60字)")
