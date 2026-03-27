@@ -319,7 +319,7 @@ class CareerMatchingService:
                     logger.warning(f"單筆職缺分析失敗: {e}")
                     return None
 
-            with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
                 final_json_list = list(executor.map(format_and_analyze, top_10_candidates))
                 
             return [j for j in final_json_list if j is not None]
