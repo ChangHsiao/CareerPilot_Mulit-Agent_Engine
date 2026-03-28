@@ -39,7 +39,13 @@ def get_resume_config(task_type: TaskType, inputs: Dict[str, Any]) -> Optional[D
     elif task_type == TaskType.RESUME_OPT:
         # 建立零件
         optimizer = create_optimization_strategy_consultant()
-        opt_task = create_optimization_task(optimizer)
+        
+        # 可選注入 (Optional Injection)
+        extra_context = ""
+        if "resume_content" in inputs and "analysis_content" in inputs:
+            extra_context = f"【原始履歷內容】:\n{inputs['resume_content']}\n\n【履歷診斷分析結果】:\n{inputs['analysis_content']}"
+            
+        opt_task = create_optimization_task(optimizer, extra_context)
 
         return {
             "output_model": ResumeOptimization,

@@ -40,8 +40,10 @@ from src.core.agent_engine.manager import CareerAgentManager
 # 3. 建立頁面 UI 與 Session State 快取
 # ==========================================
 st.set_page_config(page_title="履歷生成與優化", page_icon="📄", layout="wide")
-st.title("📄 履歷診斷與優化模組 (分段進行版)")
-st.markdown("填寫完基本資料後，您可以先產出「診斷分析報告」進行審閱，確認後再決定是否一鍵交由 AI 進行「履歷再造」。完全無寫入資料庫！")
+st.title("📄 履歷診斷與優化模組")
+st.markdown("""
+### 說明：
+填寫完基本資料後，先產出「診斷分析報告」進行審閱，確認後再決定是否一鍵交由 AI 進行「履歷再造」。""")
 
 # 狀態管理
 if "step1_done" not in st.session_state:
@@ -52,12 +54,12 @@ if "opt_result" not in st.session_state:
     st.session_state.opt_result = None
 
 with st.form("resume_input_form"):
-    st.subheader("1. 您的原始履歷 (取代從 DB 抓取)")
+    st.subheader("1. 您的原始履歷")
     # 此處可以提供預設長文，避免每次都要重打
     resume_input_default = st.session_state.get("mock_resume_data", {}).get("structured_data", "")
     resume_input = st.text_area("請貼上您的現有經歷、學歷與技能：", height=200, value=resume_input_default, placeholder="例如：台大資工系畢業，曾在某科技擔任軟體工程師，負責開發前後端系統...")
     
-    st.subheader("2. 您的目標職位 (取代問卷結果)")
+    st.subheader("2. 您的目標職位")
     roles = [
         "前端工程師", 
         "後端工程師", 
@@ -159,7 +161,14 @@ if st.session_state.step1_done and st.session_state.analysis_result:
                 # 第二部需要跑 resume_opt 任務
                 # 確保前一階段分析結果還在
                 st.session_state["mock_analysis_data"] = st.session_state.analysis_result
-                opt_result = manager.run_task("resume_opt", {"user_id": "demo_user"})
+                
+                # [FIX] 以直接注入的方式將前端狀態塞給 Agent，避免 Agent 工具惰性與斷層幻覺
+                payload = {
+                    "user_id": "demo_user",
+                    "resume_content": st.session_state.get("mock_resume_data", {}).get("structured_data", ""),
+                    "analysis_content": json.dumps(st.session_state.analysis_result, ensure_ascii=False) if st.session_state.analysis_result else ""
+                }
+                opt_result = manager.run_task("resume_opt", payload)
                 st.session_state.opt_result = opt_result
             except Exception as e:
                 st.error(f"優化期間發生錯誤：{str(e)}")

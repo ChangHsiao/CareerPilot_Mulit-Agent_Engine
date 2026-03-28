@@ -30,14 +30,7 @@ ANALYSIS_TASK_DESCRIPTION = """
 """
 
 # --- 2. 履歷優化任務 ---
-OPTIMIZATION_TASK_DESCRIPTION = """
-必需先使用下列兩項工具進行資料的獲取:
-1.使用'FetchUserResume' 工具，傳入 user_id='{user_id}' 以獲取原始履歷內容。
-2.使用'FetchUserResumeAnalysis' 工具，傳入 user_id='{user_id}' 以獲取履歷診斷分析結果。
-
-你現在是一位資深履歷策略顧問。
-你的目標是將 [原始履歷內容] 根據 [履歷診斷分析結果] 進行優化，核心挑戰在於：優化後的履歷必須讓使用者覺得「這就是我寫的」。
-
+OPTIMIZATION_RULES = """
 執行步驟如下：
 1.風格建模：首先分析原履歷的語氣（是謙遜還是自信？是精煉條列還是敘事性強？），定義其寫作風格輪廓。
 2.自傳存在性判斷 ：先檢查原始履歷是否包含自傳(autobiography)段落。
@@ -60,6 +53,16 @@ OPTIMIZATION_TASK_DESCRIPTION = """
 3.若需撰寫自傳，必須完全基於原履歷資訊生成，不得捏造經歷與技能。
 """
 
+OPTIMIZATION_TASK_DESCRIPTION = f"""
+必需先使用下列兩項工具進行資料的獲取:
+1.使用'FetchUserResume' 工具，傳入 user_id='{{user_id}}' 以獲取原始履歷內容。
+2.使用'FetchUserResumeAnalysis' 工具，傳入 user_id='{{user_id}}' 以獲取履歷診斷分析結果。
+
+你現在是一位資深履歷策略顧問。
+你的目標是將 [原始履歷內容] 根據 [履歷診斷分析結果] 進行優化，核心挑戰在於：優化後的履歷必須讓使用者覺得「這就是我寫的」。
+{OPTIMIZATION_RULES}
+"""
+
 def create_analysis_task(agent) -> Task:
     """建立履歷分析任務"""
     logger.info("開始生成履歷分析任務 (Analysis Task)...")
@@ -70,11 +73,18 @@ def create_analysis_task(agent) -> Task:
         callback=task_audit_callback
     )
 
-def create_optimization_task(agent) -> Task:
+def create_optimization_task(agent, extra_context: str = "") -> Task:
     """建立履歷優化任務"""
     logger.info("開始生成履歷優化任務 (Optimization Task)...")
+    
+    if extra_context:
+        # 動態覆寫，徹底拔除要求呼叫 Tool 的指令，直接放入文本，避免 LLM 認知失調產生幻覺
+        desc = f"你現在是一位資深履歷策略顧問。\n你的目標是將以下【原始履歷內容】根據【履歷診斷分析結果】進行嚴謹的優化，核心挑戰在於：優化後的履歷必須讓使用者覺得「這就是我寫的」。\n\n{extra_context}\n\n{OPTIMIZATION_RULES}"
+    else:
+        desc = OPTIMIZATION_TASK_DESCRIPTION
+        
     return Task(
-        description=OPTIMIZATION_TASK_DESCRIPTION,
+        description=desc,
         expected_output="優化後的完整履歷全文與風格定義。",
         agent=agent,
         callback=task_audit_callback

@@ -30,4 +30,4 @@ class ResumeOptimization(BaseModel):
     core_skills: List[str] = Field(description="從履歷中萃取與推薦職缺相關的技術或軟實力關鍵字6個")
     projects: Optional[List[str]] = Field(default_factory=list, description="優化後的專案描述，強調技術棧與量化成果")
     education: List[str] = Field(description="最高及次高學歷資訊列表，包含學校、學系、學位與畢業時間")
-    autobiography: str = Field(description="保留使用者原本風格、敘事順序與用詞習慣前提下的優化後完整自傳")
+    autobiography: str = Field(description="保留使用者原本風格、敘事順序與用詞習慣前提下的優化後完整自傳，大約 500-600 字")
