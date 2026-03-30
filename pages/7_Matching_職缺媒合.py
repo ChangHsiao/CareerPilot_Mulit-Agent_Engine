@@ -26,13 +26,13 @@ HandlerRegistry.get_handler = _mock_get_handler
 # 1. 頁面 UI 與雙模式設定
 # ==========================================
 st.set_page_config(page_title="職缺媒合與面試分析", page_icon="🎯", layout="wide")
-st.title("🎯 職缺媒合與面試攻防模組 (Dual-Mode 雙擎架構)")
-st.markdown("本模組是系統中最複雜的核心，結合了 **Qdrant 向量混合搜尋 (Hybrid Search)**、**Numpy 數學硬條件重排 (Re-ranking)** 以及 **CrewAI 十股平行運算的人工智慧審查**。")
+st.title("🎯 職缺職缺匹配測試")
+st.markdown("本模組 RAG 推薦引擎，以 **CrewAI 十股平行運算的人工智慧審查**。")
 
 # 模式切換
 engine_mode = st.radio(
-    "⚙️ 請選擇演示引擎模式：",
-    options=["🔴 Live Database Engine (真實打入 Supabase 與 Qdrant 進行多階段檢索) [火力展示首選]", 
+    "⚙️ 演示引擎模式：",
+    options=["🔴 Live Database Engine (真實 Supabase 與 Qdrant 檢索)", 
              "🟢 Full Mock Engine (完全無痕斷網/本地快速展示用預設假資料)"],
     index=0
 )
@@ -59,16 +59,16 @@ if "Live Database Engine" in engine_mode:
     with st.form("live_matching_form"):
         col1, col2, col3 = st.columns(3)
         with col1:
-            input_user_id = st.number_input("使用者 ID (User ID)", value=st.session_state.get("mock_user_id", 3), step=1)
+            input_user_id = st.number_input("使用者 ID (User ID)", value=st.session_state.get("mock_user_id", 40), step=1)
         with col2:
             input_source = st.radio("履歷來源表單路由 (Source Type)", options=["RESUME", "OPTIMIZATION"], index=1 if st.session_state.get("mock_source", "") == "OPTIMIZATION" else 0)
         with col3:
-            input_doc_id = st.number_input("文件編號 (Document ID)", value=st.session_state.get("mock_doc_id", 5), step=1)
+            input_doc_id = st.number_input("文件編號 (Document ID)", value=st.session_state.get("mock_doc_id", 36), step=1)
             
         st.markdown("**(Optional) Qdrant Payload 過濾條件**")
         col_f1, col_f2 = st.columns(2)
         with col_f1:
-            salary_min = st.number_input("期望最低年薪 (最低底薪門檻過濾)", value=600000, step=50000)
+            salary_min = st.number_input("期望最低月薪 (下限過濾)", value=40000, step=5000)
         with col_f2:
             input_city = st.multiselect("地區過濾 (City)", options=["台北市", "新北市", "桃園市", "新竹市", "新竹縣", "台中市", "台南市", "高雄市"], default=[])
         
@@ -78,12 +78,12 @@ if "Live Database Engine" in engine_mode:
         # 實例化真實的服務
         qdrant_client = get_qdrant_client()
         supabase_client = get_supabase_client()
-        openai_api_key = os.getenv("OPENAI_API_KEY", "")
-        
+        # API Key 已由 CareerAgentManager 透過 LiteLLM 自動讀取環境變數管理
+        # openai_api_key 參數保留是為了向後相容 CareerMatchingService 介面
         service = CareerMatchingService(
             qdrant_client=qdrant_client,
             supabase_client=supabase_client,
-            openai_api_key=openai_api_key
+            openai_api_key=""  # 已棄用，由 Manager 統一管理
         )
         
         filters = {

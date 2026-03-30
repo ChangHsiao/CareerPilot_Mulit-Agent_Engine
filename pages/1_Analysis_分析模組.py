@@ -10,245 +10,262 @@ import pandas as pd
 EXPERIENCED_RESUME = {
   "skills": [
     {
-      "name": "JavaScript",
-      "level": 3
+      "name": "AWS",
+      "level": 9
     },
     {
-      "name": "HTML/CSS",
-      "level": 4
+      "name": "GCP",
+      "level": 7
     },
     {
-      "name": "React",
-      "level": 2
+      "name": "Kubernetes",
+      "level": 8
+    },
+    {
+      "name": "Terraform",
+      "level": 8
+    },
+    {
+      "name": "Python",
+      "level": 7
+    },
+    {
+      "name": "Docker",
+      "level": 8
+    },
+    {
+      "name": "Linux",
+      "level": 8
+    },
+    {
+      "name": "Security",
+      "level": 7
     }
   ],
-  "privacy": "private",
-  "summary": "2025 年畢業生，無正式工作經驗。自學前端約 6 個月，做過幾個練習專案。積極求職中。",
+  "privacy": "public",
+  "summary": "7 years Cloud architecture. AWS Solutions Architect certified. Designed multi-region infra for fintech.",
   "projects": [
-    "練習: Todo App",
-    "練習: 氣象 API 串接",
-    "畢業專題: 線上問卷系統 (前端部分)"
+    "AWS re:Invent attendee",
+    "Internal cloud training"
   ],
   "education": [
     {
-      "details": "國立台灣大學 資工系 學士 2025 畢業"
+      "details": "元智大學 資訊工程 碩士"
     }
   ],
-  "experience": [],
+  "experience": [
+    {
+      "title": "Cloud Solutions Architect",
+      "years": "4",
+      "company": "玉山銀行",
+      "achievements": "Led migration of 100+ services",
+      "responsibilities": "Design cloud migration, security compliance, cost optimization, training teams."
+    },
+    {
+      "title": "Cloud Engineer",
+      "years": "3",
+      "company": "中華電信",
+      "achievements": "Reduced cloud spend 30%",
+      "responsibilities": "AWS/GCP deployment, IaC with Terraform, monitoring setup."
+    }
+  ],
   "personal_info": {
-    "name": "劉家豪 (David Liu)",
-    "email": "demo_user@test.com",
-    "github": "https://github.com/david-liu-remote",
-    "location": "Remote (Taoyuan)"
+    "name": "蔡志強 (Alex Tsai)",
+    "email": "alex_fit@me.com",
+    "github": "https://github.com/alex-tsai-tech",
+    "location": "Hsinchu"
   }
 }
 
 EXPERIENCED_SURVEY = {
-    "questionnaire_response": {
-    "module_a": {
-    "q5_devops": "paas_only",
-    "q8_domain": "Online Survey Systems",
-    "q3_backend": "unfamiliar",
-    "q6_ai_data": "api_consumer",
+  "module_a": {
+    "q5_devops": "iac_monitoring",
+    "q8_domain": "Cloud Migration, Financial Compliance",
+    "q3_backend": "db_auth_testing",
+    "q6_ai_data": "pandas_numpy",
     "q2_frontend": "basic_html_css",
     "q4_database": [
-      "rdbms_sql"
+      "rdbms_sql",
+      "nosql_document",
+      "key_value_cache",
+      "data_warehouse"
     ],
-    "q7_security": "framework_default",
+    "q7_security": "audit_devsecops",
     "q1_languages": [
       {
-        "name": "JavaScript",
+        "name": "Python",
+        "score": 4
+      },
+      {
+        "name": "SQL",
         "score": 3
       },
       {
-        "name": "HTML/CSS",
-        "score": 4
+        "name": "Go",
+        "score": 3
       }
     ]
-    },
-    "module_b": {
-    "q14_process": "waterfall_none",
-    "q15_english": "slow_reading",
-    "q13_learning": "hoarding",
-    "q10_tech_choice": "popularity",
-    "q12_code_review": "formality",
-    "q9_troubleshoot": "log_search",
-    "q11_communication": "comply"
-    },
-    "module_c": {
-    "q18_industry": "software_house",
-    "q17_target_role": "frontend",
-    "q16_current_level": "entry_level",
-    "q19_search_status": "active_urgent"
-    },
-    "module_d": {
+  },
+  "module_b": {
+    "q14_process": "process_optimization",
+    "q15_english": "global_comm",
+    "q13_learning": "deep_dive_sharing",
+    "q10_tech_choice": "tradeoff_analysis",
+    "q12_code_review": "architecture_solid",
+    "q9_troubleshoot": "incident_analysis",
+    "q11_communication": "value_driven"
+  },
+  "module_c": {
+    "q18_industry": "big_tech",
+    "q17_target_role": "devops_sre",
+    "q16_current_level": "lead_architect",
+    "q19_search_status": "passive_open"
+  },
+  "module_d": {
     "q21_pressure": "accept_immediately",
     "q20_values_top3": [
       "financial_reward",
       "technical_growth",
-      "team_culture"
+      "brand_reputation"
     ],
-    "q22_career_type": "generalist",
+    "q22_career_type": "specialist",
     "q23_learning_style": [
-      "video_courses",
-      "hands_on_projects"
+      "official_docs",
+      "hands_on_projects",
+      "books"
     ]
-    }
-    }
+  }
 }
 
 EXPERIENCED_TRAIT = {
-  "trait_created_at": "2026-03-04 11:09:00Z",
+  "trait_created_at": "2026-03-04 11:08:00Z",
   "trait_raw_scores": {
-    "decision": 3,
-    "learning": 3,
+    "decision": 5,
+    "learning": 4,
     "transfer": 5,
     "ambiguity": 2,
-    "structure": 8
+    "structure": 5
   },
   "primary_archetype": "STRUCTURE_ARCHITECT",
   "secondary_archetypes": [
+    "PRAGMATIC_REFINER",
     "CROSS_DOMAIN_INTEGRATOR"
   ],
   "trait_normalized_scores": {
-    "decision": 57,
-    "learning": 50,
+    "decision": 86,
+    "learning": 60,
     "transfer": 86,
     "ambiguity": 57,
-    "structure": 80
+    "structure": 50
   }
 }
 
 # (2) 無經驗/白紙轉職者範本
 ENTRY_LEVEL_RESUME = {
-  "name": "吳宜蓁",
-  "email": "ycwu@example.com",
-  "phone": "0956-789-012",
-  "github": "https://github.com/test-designer-wu",
+  "name": "李佳穎",
+  "email": "jyli@example.com",
+  "phone": "0945-678-901",
+  "github": "null",
   "skills": {
     "tools": [
-      "Figma",
-      "Adobe Illustrator",
-      "Zeplin",
-      "VS Code（自學中）"
+      "Excel（VLOOKUP, PivotTable, 條件格式）",
+      "PowerPoint",
+      "SAP（基礎）"
     ],
     "domain": [
-      "UI/UX 設計",
-      "Design System",
-      "Prototype",
-      "用戶研究"
+      "財務報表",
+      "成本分析",
+      "預算管理",
+      "會計準則"
     ],
     "programming": [
-      "CSS（基礎）",
-      "JavaScript（入門）"
+      "Excel（進階）"
     ]
   },
-  "summary": "實踐大學視覺傳達設計系畢業，現任 UI 設計師 1 年，熟悉 Figma，對 CSS 與 JavaScript 有入門概念，目標打通設計到實作的完整能力鏈，轉型全端工程師。",
+  "summary": "逢甲大學會計學系畢業，現任財務助理 1 年，熟悉 Excel 進階操作與樞紐分析表，具備財務報表製作與數據分析基礎，目標轉職資料分析師。",
   "linkedin": "null",
-  "projects": [
-    {
-      "name": "設計系統建置（工作中）",
-      "tools": [
-        "Figma",
-        "Storybook（學習中）"
-      ],
-      "description": "主導公司設計系統建置，定義 Color Token、Typography 規範、Component Library，與工程師共同維護"
-    },
-    {
-      "name": "個人網頁作品集（進行中）",
-      "tools": [
-        "HTML",
-        "CSS",
-        "JavaScript"
-      ],
-      "description": "以 HTML/CSS/JavaScript 建立個人設計作品集網站，自學 DOM 操作與基礎動效"
-    }
-  ],
+  "projects": [],
   "education": [
     {
       "degree": "學士",
-      "school": "實踐大學",
-      "department": "視覺傳達設計系",
-      "graduation_year": "2024"
+      "school": "逢甲大學",
+      "department": "會計學系",
+      "graduation_year": "2023"
     }
   ],
   "experience": [
     {
-      "title": "UI 設計師",
-      "company": "某設計工作室",
-      "duration": "2024/07 – 現在（約1年）",
+      "title": "財務助理",
+      "company": "某製造業公司",
+      "duration": "2023/08 – 現在（約1年）",
       "description": [
-        "負責 App 與網頁 UI 介面設計，交付高保真 Figma 原型",
-        "與前端工程師協作，提供 Design Token 與切版規範文件",
-        "參與用戶訪談與可用性測試，迭代優化設計方案"
+        "負責每月財務報表製作，包含損益表、資產負債表彙整",
+        "使用 Excel 樞紐分析表進行成本分析，每月提供部門費用報告",
+        "協助年度預算編製，整理並核對各部門費用資料"
       ]
     }
   ],
-  "autobiography": "我是吳宜蓁，一年的 UI 設計師工作讓我深刻體會設計與工程之間的鴻溝。我希望成為能同時掌握設計美感與技術實作的全端工程師，讓好的設計不再因工程限制而妥協。"
+  "autobiography": "我是李佳穎，在財務工作中大量使用 Excel 進行數據分析，發現自己對數據背後的洞察更感興趣。希望進一步學習 Python 與 SQL，轉往資料分析領域發展。"
 }
 
 ENTRY_LEVEL_SURVEY = {
-    "questionnaire_response": {
-    "module_a": {
+  "module_a": {
     "q5_devops": "ftp_git_pull",
-    "q8_domain": "生命科學／生物醫學",
+    "q8_domain": "財務／會計／FinTech",
     "q3_backend": "script_only",
     "q6_ai_data": "api_only",
     "q2_frontend": "no_experience",
     "q4_database": [],
     "q7_security": "framework_default",
     "q1_languages": []
-    },
-    "module_b": {
-    "q14_process": "no_process",
-    "q15_english": "translate_dependent",
-    "q13_learning": "wait_for_project",
-    "q10_tech_choice": "just_learned",
+  },
+  "module_b": {
+    "q14_process": "agile_scrum",
+    "q15_english": "slow_reading",
+    "q13_learning": "hoarding",
+    "q10_tech_choice": "team_familiarity",
     "q12_code_review": "formalism",
     "q9_troubleshoot": "restart",
-    "q11_communication": "passive_follow"
-    },
-    "module_c": {
-    "q18_industry": "big_tech",
+    "q11_communication": "alternative_solution"
+  },
+  "module_c": {
+    "q18_industry": "traditional_digital",
     "q17_target_role": "data_scientist",
     "q16_current_level": "entry_level",
-    "q19_search_status": "active_urgent"
-    },
-    "module_d": {
+    "q19_search_status": "passive_observing"
+  },
+  "module_d": {
     "q21_pressure": "consider_short_term",
     "q20_values_top3": [
-      "technical_growth",
       "financial_reward",
-      "work_life_balance"
+      "work_life_balance",
+      "status"
     ],
-    "q22_career_type": "specialist",
+    "q22_career_type": "generalist",
     "q23_learning_style": [
-      "video_courses",
-      "hands_on_projects"
+      "documentation",
+      "books"
     ]
-    }
-    }
+  }
 }
 
 ENTRY_LEVEL_TRAIT = {
-  "trait_created_at": "2026-03-04T09:00:00Z",
+  "trait_created_at": "2026-03-04T09:15:00Z",
   "trait_raw_scores": {
     "decision": 2,
-    "learning": 3,
-    "transfer": 5,
+    "learning": 2,
+    "transfer": 2,
     "ambiguity": 0,
-    "structure": 10
+    "structure": 9
   },
-  "primary_archetype": "STRUCTURE_ARCHITECT",
-  "secondary_archetypes": [
-    "CROSS_DOMAIN_INTEGRATOR"
-  ],
+  "primary_archetype": "PRAGMATIC_REFINER",
+  "secondary_archetypes": [],
   "trait_normalized_scores": {
     "decision": 43,
-    "learning": 50,
-    "transfer": 86,
+    "learning": 40,
+    "transfer": 43,
     "ambiguity": 29,
-    "structure": 100
+    "structure": 90
   }
 }
 
@@ -294,13 +311,13 @@ if "form_resume_text" not in st.session_state:
 st.subheader("一鍵注入測試場景 (Mock Data Injectors)")
 col_mock1, col_mock2, _ = st.columns([1, 1, 2])
 with col_mock1:
-    if st.button("🚀 載入【資深 AI 工程師】測試包"):
+    if st.button("🚀 載入【有經驗轉職者】測試包"):
         st.session_state.form_survey_json = json.dumps(EXPERIENCED_SURVEY, ensure_ascii=False, indent=2)
         st.session_state.form_trait_json = json.dumps(EXPERIENCED_TRAIT, ensure_ascii=False, indent=2)
         st.session_state.form_resume_text = EXPERIENCED_RESUME
         st.rerun()
 with col_mock2:
-    if st.button("🌱 載入【白紙轉職者】測試包"):
+    if st.button("🌱 載入【無經驗轉職者】測試包"):
         st.session_state.form_survey_json = json.dumps(ENTRY_LEVEL_SURVEY, ensure_ascii=False, indent=2)
         st.session_state.form_trait_json = json.dumps(ENTRY_LEVEL_TRAIT, ensure_ascii=False, indent=2)
         st.session_state.form_resume_text = ENTRY_LEVEL_RESUME
