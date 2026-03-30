@@ -26,7 +26,8 @@ class CareerMatchingService:
         self.job_retriever = JobMatchRetriever(qdrant_client, "job_vectors")
         
         # [改動] 改為使用 CareerAgentManager 管理 AI 呼叫
-        # 保留 openai_api_key 參數接收（對外介面不變），但實際由 Manager 透過環境變數管理 API Key
+        # Matching 模組因需平行呼叫 Top10 職缺分析，Token 消耗大，故顯式指定較便宜的 gpt-4o-mini
+        # 其他模組（分析、履歷等）仍跟隨 .env 中的 LLM_PROVIDER 全域設定
         from src.core.agent_engine.manager import CareerAgentManager
         self.agent_manager = CareerAgentManager(model_name="gpt-4o-mini", temp=0.5)
 
