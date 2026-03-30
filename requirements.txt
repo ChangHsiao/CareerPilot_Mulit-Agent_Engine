@@ -7,7 +7,10 @@ langchain-community>=0.0.10
 langchain-openai>=0.0.5
 openai>=1.10.0
 
+# Google Gemini 支援 (透過 CrewAI 內建的 LiteLLM 自動支援)
+# 若遇到相容性問題可嘗試: pip install 'crewai[gemini]'
 # 環境變數管理
+crewai[google-genai]
 python-dotenv>=1.0.0
 
 # 資料處理與格式校驗
