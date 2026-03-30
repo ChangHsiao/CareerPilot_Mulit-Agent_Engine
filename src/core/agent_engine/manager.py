@@ -19,10 +19,29 @@ class CareerAgentManager:
     負責根據 TaskType 組裝對應的 Agent 與 Task，並執行 CrewAI 流程。
     """
     
-    def __init__(self, model_name: str = "gpt-4o", temp: float = 0.5):
+    def __init__(self, model_name: str = None, temp: float = 0.5):
+        """
+        初始化 LLM。
+        若未指定 model_name，則根據環境變數 LLM_PROVIDER 自動決定預設模型。
+        - LLM_PROVIDER="google" → 預設使用 gemini/gemini-2.0-flash
+        - LLM_PROVIDER="openai" → 預設使用 gpt-4o
+        可透過 LLM_MODEL_NAME 環境變數自訂模型名稱。
+        """
+        if model_name is None:
+            provider = os.getenv("LLM_PROVIDER", "google").lower()
+            if provider == "google":
+                model_name = os.getenv("LLM_MODEL_NAME", "gemini-2.0-flash")
+            else:
+                model_name = os.getenv("LLM_MODEL_NAME", "gpt-4o")
+        
+        # 有溫度的模型
         self.llm = LLM(model=model_name, temperature=temp)
-        # qa agent 使用低溫度的 LLM
-        self.qa_llm = LLM(model=model_name, temperature=0.1) 
+        # # qa agent 使用低溫度的 LLM
+        self.qa_llm = LLM(model=model_name, temperature=0.1)
+
+        # 沒有溫度的模型
+        # self.llm = LLM(model=model_name)
+        # self.qa_llm = LLM(model=model_name)
         
         # 初始化 Supabase Client 與結果處理註冊器(資料庫儲存)
         self.supabase = get_supabase_client()
