@@ -105,79 +105,77 @@ def get_experienced_mock_data():
 def get_entry_level_mock_data():
     """回傳無經驗者的問卷與特質假資料 (履歷將由 Manager 透過 user_id 從 DB 撈取)"""
     survey_data = {
-    "module_a": {
+  "module_a": {
     "q5_devops": "ftp_git_pull",
-    "q8_domain": "生命科學／生物醫學",
+    "q8_domain": "財務／會計／FinTech",
     "q3_backend": "script_only",
     "q6_ai_data": "api_only",
     "q2_frontend": "no_experience",
     "q4_database": [],
     "q7_security": "framework_default",
     "q1_languages": []
-    },
-    "module_b": {
-    "q14_process": "no_process",
-    "q15_english": "translate_dependent",
-    "q13_learning": "wait_for_project",
-    "q10_tech_choice": "just_learned",
+  },
+  "module_b": {
+    "q14_process": "agile_scrum",
+    "q15_english": "slow_reading",
+    "q13_learning": "hoarding",
+    "q10_tech_choice": "team_familiarity",
     "q12_code_review": "formalism",
     "q9_troubleshoot": "restart",
-    "q11_communication": "passive_follow"
-    },
-    "module_c": {
-    "q18_industry": "big_tech",
+    "q11_communication": "alternative_solution"
+  },
+  "module_c": {
+    "q18_industry": "traditional_digital",
     "q17_target_role": "data_scientist",
     "q16_current_level": "entry_level",
-    "q19_search_status": "active_urgent"
-    },
-    "module_d": {
+    "q19_search_status": "passive_observing"
+  },
+  "module_d": {
     "q21_pressure": "consider_short_term",
     "q20_values_top3": [
-      "technical_growth",
       "financial_reward",
-      "work_life_balance"
+      "work_life_balance",
+      "status"
     ],
-    "q22_career_type": "specialist",
+    "q22_career_type": "generalist",
     "q23_learning_style": [
-      "video_courses",
-      "hands_on_projects"
+      "documentation",
+      "books"
     ]
-    }
-    }
+  }
+}
 
     trait_data = {
-    "trait_created_at": "2026-03-04T09:00:00Z",
-    "trait_raw_scores": {
+  "trait_created_at": "2026-03-04T09:15:00Z",
+  "trait_raw_scores": {
     "decision": 2,
-    "learning": 3,
-    "transfer": 5,
+    "learning": 2,
+    "transfer": 2,
     "ambiguity": 0,
-    "structure": 10
-    },
-    "primary_archetype": "STRUCTURE_ARCHITECT",
-    "trait_raw_responses": {
-    "Q1": "C",
+    "structure": 9
+  },
+  "primary_archetype": "PRAGMATIC_REFINER",
+  "trait_raw_responses": {
+    "Q1": "A",
     "Q2": "A",
     "Q3": "C",
     "Q4": "B",
     "Q5": "A",
     "Q6": "B",
     "Q7": "B",
-    "Q8": "A",
-    "Q9": "A",
+    "Q8": "B",
+    "Q9": "C",
     "Q10": "A"
-    },
-    "secondary_archetypes": [
-    "CROSS_DOMAIN_INTEGRATOR"
-    ],
-    "trait_normalized_scores": {
+  },
+  "secondary_archetypes": [],
+  "trait_normalized_scores": {
     "decision": 43,
-    "learning": 50,
-    "transfer": 86,
+    "learning": 40,
+    "transfer": 43,
     "ambiguity": 29,
-    "structure": 100
-    }
-    }
+    "structure": 90
+  }
+}
 
     return survey_data, trait_data
 
@@ -241,7 +239,7 @@ def test_experienced_analysis():
 def test_entry_level_analysis():
     """2. 帶入無經驗者假資料，並從 DB 撈取其履歷進行測試"""
     print("\n\n====== TEST CASE 2: ENTRY LEVEL ANALYSIS (Mock Data + DB Resume) ======")
-    user_id = "37" # 強迫 Agent 去撈資料庫裡的該 user_id 的履歷
+    user_id = "40" # 強迫 Agent 去撈資料庫裡的該 user_id 的履歷
     manager = CareerAgentManager()
     survey_data, trait_data = get_entry_level_mock_data()
     trait_data["user_id"] = user_id
